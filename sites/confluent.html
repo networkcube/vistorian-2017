@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="../styles.css">
+<link rel="stylesheet" type="text/css" href="../visview.css">
+<link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Comfortaa' rel='stylesheet' type='text/css'>
+
+<script src="../../networkcube/core/lib/jquery.js"></script>
+<script src="../../networkcube/core/networkcube.js"></script>
+<script src="../lib/jquery.js"></script>
+
+</head>
+<title>The Vistorian</title>
+<body>
+
+    <table>
+        <tr>
+            <td width="220px">
+                <img width="100%" src="../logos/logo2.png"/>
+                <div width="220" id="bookmarkFrame"> 
+            </td>    
+            <td width="220px">
+                <div width="220" id="visFrame"> 
+            </td>    
+        </tr>
+    </table>
+	<script>
+        $( document ).ready(function() {
+            var width = window.innerWidth -30;
+            width_col1 = 220;
+            width_col2 = (width - width_col1);
+
+            var height = window.innerHeight - 50
+
+            var params = networkcube.getUrlVars();
+            params['datasetName'] = params['datasetName'].replace(/___/g, ' ');
+            console.log(params)
+            networkcube.createVisualizationIFrame(
+                'bookmarkFrame', 
+                '/networkcube/visualizations/bookmarkbrowser/index.html',
+                params['session'], params['datasetName'], 
+                width_col1, height);
+            networkcube.createVisualizationIFrame(
+                'visFrame', 
+                '/networkcube/visualizations/confluent/index.html',
+                params['session'], params['datasetName'], 
+                width_col2, height);
+            // networkcube.createVisualizationIFrame('visFrame', 'matrix', params['session'], params['datasetName'], width_col3, height_row1)         
+            // networkcube.createVisualizationIFrame('egoVisFrame', 'dynamicego', params['session'], params['datasetName'], width, height_row2)
+        });
+    </script>
+</body>
+</html>

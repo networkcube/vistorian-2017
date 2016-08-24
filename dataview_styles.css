@@ -1,0 +1,129 @@
+div#noNetworkTables{
+    padding-top:100px;
+    height: 100px;
+}
+
+div.tableMenu{
+    height: 25px;
+}
+
+.nobr {
+    white-space: nowrap;
+}
+
+td{
+    /*border: 1px dashed #777777;*/
+}
+
+td#main{
+    margin:auto;
+
+}
+
+td#menu{
+    padding:20px;
+    width:200px;
+    min-width:250px;
+    max-width:250px;
+}
+
+td#{
+    width: 400px;
+    margin:20px;
+    padding: 20px;
+    padding-left:40px;
+}
+
+h3{
+    font-weight: bold;
+}
+
+
+p.title{
+    font-weight: 100;
+    font-size: 12pt;
+    background-color: #E17F3E;
+    color:  #ffffff;
+    padding:7px;
+    padding-left: 20px;
+    border-radius: 2px;
+}
+
+.visLink{
+    margin-top: 5px;
+}
+
+
+.menuicon{
+    height: 30px;
+}
+
+.inlineicon {
+    height: 12pt;
+}
+
+button.tableMenuButton{
+    float:right;
+    margin-left: 10px;
+    background-color:#E17F3E;
+    border-radius:10px;
+    border: none;
+    display:inline-block;
+    cursor:pointer;
+    color:#ffffff;
+    font-size:12px;
+    font-size: "Helvetiva", sans-serif;
+}
+
+input#replaceButton{
+    margin-left: 10px;
+    background-color:#E17F3E;
+    border-radius:10px;
+    border: none;
+    display:inline-block;
+    cursor:pointer;
+    color:#ffffff;
+    font-size:12px;
+    font-size: "Helvetiva", sans-serif;
+}
+
+.menuButton{
+    background-color:#E17F3E;
+    border-radius:10px;
+    border: none;
+    display:inline-block;
+    cursor:pointer;
+    color:#ffffff;
+    font-size:12px;
+    font-size: "Helvetiva", sans-serif;
+}
+ 
+/* Tables */
+
+
+
+.emptyTableCell{
+    background-color:#ffeeee;
+}
+
+.messageBox{
+    position: fixed;
+    display: block;
+    width: 600px;
+    height: 150px;
+    background-color: #ffffff;
+    border: solid 2px black; 
+    border-radius: 10px;
+    position: absolute;
+    margin:auto;
+    top:200px; 
+    vertical-align: middle;
+}
+
+.messageBox p{
+    font-size: 14pt;
+    font-weight: bold;
+    font-family: "Helvetica" 
+    margin:auto;
+    padding:20px;
+}

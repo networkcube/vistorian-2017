@@ -1,0 +1,266 @@
+body{
+	font-family: Helvetica, sans-serif;
+	font-size: 11pt;
+	font-weight: 100;
+	background: #fff;
+}
+
+div#main{
+    margin: 0 auto;
+	/*background: #fff;*/
+	width: 1000px;
+	text-align: center;
+}
+
+div#layout{
+	padding: 0px;
+	width: 100%;
+}
+
+div#footer{
+	height: 200px;
+	color: #777;
+	text-align: center;
+}
+
+div#logo{
+	margin-bottom: 50px;
+}
+
+div#logos img{
+	height: 35px;
+	margin-left: 20px;
+	margin-right: 20px;
+}
+
+div#content{
+}
+
+div#description{
+	display: inline-block; *display: inline;
+	width: 45%;
+	text-align: left;
+	vertical-align: top;
+	padding-right: 30px;
+}
+div#upload{
+	display: inline-block; *display: inline;
+	width: 45%;
+	text-align: left;
+	vertical-align: top;
+	padding-left: 40px;
+}
+
+p.warning{
+	border: 1px solid #d95f0e;
+	border-radius: 5px;
+	padding:10px;
+	font-style: italic;
+}
+
+div#div_info{
+	min-width: 300px;
+	padding-right: 50px;
+}
+
+div#vistiles{
+	margin-bottom: 50px;
+}
+
+div#body-rest{
+	width: 600px;
+	margin: auto;
+	text-align: left;
+}
+
+img#logo{
+	padding-top: 20px;
+	width: 250px;
+	margin: auto; 
+}
+img.menuicon{
+	height: 40px;
+	margin-right: 10px;
+}
+
+
+
+ul#menu{
+	margin-bottom: 50px;
+}
+
+ul#menu li{
+	display: inline;
+	vertical-align: center;
+	margin-left: 20px;
+}
+
+ul#menu a{
+	font-family: 'Helvetica Neue';
+	font-size:12pt;
+	font-weight: 200;
+	text-decoration: none;
+}
+
+ul#menu .menuicon{
+	margin-bottom: -10px;
+}
+
+
+p.subtitle{
+	font-size: 17pt;
+	margin-bottom: 50px;
+	font-weight: 100; 
+	font-family: 'Helvetica Neue';
+	color:#111111;
+	/*font-family: 'Lora';*/
+}
+
+td{
+	vertical-align: top;
+}
+
+h1{
+	font-size: 30pt;
+	margin-top: 0px;
+	color: #d95f0e;
+	/*font-family: 'Amatic SC', Helvetica, sans-serif;*/
+	font-family: 'Helvetica Neue';
+	/*font-weight: 100;*/
+}
+
+h2{
+	font-size: 13pt;
+	margin-top: 30px;
+	/*font-family: 'Amatic SC', Helvetica, sans-serif;*/
+	font-family: 'Helvetica Neue';
+	color:#111111;
+	font-weight: 500;
+	background: #dddddd;
+	padding:4px;
+	padding-left:10px;
+	border-radius: 6px;
+}
+
+h3{
+	font-size: 12pt;
+	margin:5px;
+}
+
+
+a{
+	color: #d95f0e;
+}
+
+a.vis_link{
+	font-size: 12pt;
+}
+
+a.underlined{
+	text-decoration: underline;
+}
+
+a{
+	cursor:pointer;
+}
+
+p#intro{
+/*font-size: 14pt;*/
+}
+
+ul{
+	list-style: none;
+}
+.nointent{
+	padding: 0;
+}
+
+#steps li{
+	margin-bottom: 20px;
+}
+
+img.visimage{
+	height: 230px;
+	border: solid 1px #dddddd;
+	margin-right: 5px;
+	margin-left: 5px;
+}
+
+img.logo{
+	width: 130px;
+}
+
+
+ul.dataspec{
+    font-family: monospace;
+}
+
+
+div.withborder{
+	/*background-color: #eee;*/
+	padding:10px;
+	border-radius: 3px;
+	margin-bottom: 10px;
+	border: 1px solid #d95f0e
+}
+
+
+a.largeLink, a.largeLink{
+	font-weight: bold;
+	text-decoration: underline;
+	text-align: center;
+	font-size: 18pt;
+	font-family: 'Amatic SC', Helvetica, sans-serif;
+}
+
+
+div.scrollWrapper{
+
+  height:500px;
+  width:1500px;
+  overflow:scroll;
+}
+
+p.error_msg{
+	color: red;
+}
+
+
+.visbutton{
+	background-color:transparent;
+	border: none;
+	cursor:pointer;
+	color:#d95f0e;
+	font-family: Helvetica, sans-serif;
+	font-size:14px;
+	text-decoration: underline;
+	font-weight: 100;
+}
+
+#tileViewLink{
+	margin-left: 6px;
+}
+
+
+div.tableMenu{
+	border: 1px #dddddd solid;
+	/*border-radius: 10px;*/
+	padding:5px;
+	padding-left:10px;
+	margin:5px;
+	margin-bottom:20px;
+	position:relative;
+	display: block;
+}
+
+
+select.schemaSelection{
+	width: 120px;
+}
+
+
+#networkList img{
+	height: 10px;
+	margin-left: 10px;
+	cursor:pointer;
+}
