@@ -6,7 +6,8 @@
 <link rel="stylesheet" type="text/css" href="../styles.css">
 <link rel="stylesheet" type="text/css" href="../visview.css">
 
-<script src="../../networkcube/core/networkcube.js"></script>
+<!-- <script src="../../networkcube/core/networkcube.js"></script> -->
+<script src="https://networkcube.github.io/networkcube/core/networkcube.js"/>
 <script src="../classes/vistorian.js"></script>
 
 </head>
@@ -32,6 +33,9 @@
                 © 2016 Microsoft <img src="../logos/logo-microsoft.png" height="20px"> © 2016 INRIA <img src="../logos/logo-inria.png" height="20px">
     </div>
     <script>
+        VIS_SERVER='../../' // local
+        // VIS_SERVER='https://networkcube.github.io/' // global
+
 
         $( document ).ready(function() {
             var width = window.innerWidth -30,
@@ -47,19 +51,19 @@
 
             networkcube.createVisualizationIFrame(
                 'bookmarkFrame', 
-                '../../networkcube/visualizations/bookmarkbrowser/index.html',
+                VIS_SERVER+'networkcube/visualizations/bookmarkbrowser/index.html',
                 params['session'], params['datasetName'], 
                 width_col1, height);
             
             networkcube.createVisualizationIFrame(
                 'nodelinkVisFrame', 
-                '../../networkcube/visualizations/nodelink/index.html',
+                VIS_SERVER+'networkcube/visualizations/nodelink/index.html',
                 params['session'], params['datasetName'], 
                 width_col2, height)
             
             networkcube.createVisualizationIFrame(
                 'matrixVisFrame', 
-                '../../networkcube/visualizations/matrix/index.html',
+                VIS_SERVER+'networkcube/visualizations/matrix/index.html',
                 params['session'], params['datasetName'], 
                 width_col2, height);         
             
