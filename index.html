@@ -5,8 +5,9 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8; X-Content-Type-Options=nosniff">
     <title>The Vistorian</title>
     <link rel="stylesheet" type="text/css" href="styles.css">
-
-    <body>
+    <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
+</head>    
+<body>
         <div id="main">
             <p id="sessId" style="display:none" />
             <div id="intro">
@@ -24,16 +25,20 @@
 
                 <ul id="menu">
                     <li>
-                        <a href="#visualizations"><img src="logos/search67.png" class="menuicon" />Visualizations</a>
+                        <a href="https://github.com/networkcube/networkcube/wiki/Visualization-Manual"><img src="logos/search67.png" class="menuicon" />Visualizations</a>
                     </li>
                     <li>
                         <a href="manual.html"><img src="logos/configuration12.png" class="menuicon" />Manual</a>
                     </li>
+<!--                     <li>
+                        <a href="#biblio"><img src="logos/menu33.png" class="menuicon" />Bibliography</a>
+                    </li>
+ -->                
                     <li>
-                        <a href="#history"><img src="logos/favourite15.png" class="menuicon" />Project History</a>
+                        <a href="https://github.com/networkcube/networkcube"><img src="logos/favourite15.png" class="menuicon" />Contribute</a>
                     </li>
                     <li>
-                        <a href="#biblio"><img src="logos/menu33.png" class="menuicon" />Bibliography</a>
+                        <a href="about.html" class="menuicon"><img src="logos/search67.png" class="menuicon" />About</a>
                     </li>
                     <li>
                         <a href="mailto:benjamin.bach@inria.fr" class="menuicon"><img src="logos/chat44.png" class="menuicon" />Contact</a>
@@ -67,7 +72,13 @@
                         Enter your data once, and explore it using various visualizations.
                     </p>
 
-                    <h2>Contributors</h2>
+
+                    <h2>Contribute</h2>
+
+                    If you want to contribute in this open-source project, visit <a href="https://github.com/networkcube/networkcube">https://github.com/networkcube/networkcube</a> or <a href="mailto:benj.bach@gmail.com">e-mail us</a>.
+
+
+                    <h2>Current and past contributors</h2>
 
                     <ul>
                         <li><a href="http://www.aviz.fr/~bbach">Benjamin Bach</a>, Microsoft Research-Inria Joint Center</li>
@@ -87,17 +98,14 @@
 
 
                 <div id="upload">
-                    <h2>Upload Your Data</h2>
-                    <p class="warning">
-                        This version is beta. We are working hard to relase a stable version soon! Please stay tuned and follow us on twitter: #vistorianvis</p>
-                    </p>
+                    <h2>Visualize your data</h2>
                     <p>
-                        Uploading data is simple. Your data must be formatted in table format in .CSV. Learn more about preparing your data
+                        Your data must be formatted in table format in .CSV. Learn more about preparing your data
                         <a href="manual.html#prepare">here.</a>
                     </p>
                     <p>
                         Your data is <b>not actually uploaded</b> to any of our servers, but remains private on your very
-                        own browser. Deleting the browser cache, deletes your data.
+                        own browser and is not transmitted over the internet. Deleting the browser cache, deletes your data.
                     </p>
                     <p>
                     </p>
@@ -108,12 +116,40 @@
                         <a id="resumeSessionLink" class="largeLink">Start or continue session</a>
                     </div>
 
-                    <h2>Cite us</h2>
-                    <p>Benjamin Bach, Nathalie Henry Riche, Roland Fernandez, Emmanoulis Giannisakis, Bongshin
-                    Lee, Jean-Daniel Fekete. NetworkCube: Bringing Dynamic Network Visualizations to Domain Scientists.
-                    Posters of the Conference on Information Visualization (InfoVis), Oct 2015, Chicago, United
-                    States. 2015.</p>
-                    <a href="https://hal.inria.fr/hal-01205822/document">Short paper</a>
+                    <h2>Citation</h2>
+
+                    <p><i>Benjamin Bach, Nathalie Henry Riche, Roland Fernandez, Emmanoulis Giannisakis, Bongshin Lee, et al.. NetworkCube: Bringing Dynamic Network Visualizations to Domain Scientists. Posters of the Conference on Information Visualization (InfoVis), Oct 2015, Chicago, United States. 2015.
+                    </i></p>
+
+                    <p>
+                    <small>
+                    <pre>
+@misc{bach:hal-01205822,
+  TITLE = {{NetworkCube: Bringing Dynamic Network Visualizations 
+  to Domain Scientists}},
+  AUTHOR = {Bach, Benjamin and 
+  Henry Riche, Nathalie and 
+  Fernandez , Roland and 
+  Giannisakis, Emmanoulis and 
+  Lee, Bongshin and 
+  Fekete, Jean-Daniel},
+  URL = {https://hal.inria.fr/hal-01205822},
+  NOTE = {Poster},
+  HOWPUBLISHED = {{Posters of the Conference on Information 
+  Visualization (InfoVis)}},
+  YEAR = {2015},
+  MONTH = Oct,
+  KEYWORDS = {information visualization ; networks ; 
+  social networks ; brain connectivity},
+}
+</pre>
+</small>
+                    </p>
+
+                    <a href="https://hal.inria.fr/hal-01205822/document">Read the paper</a>
+
+
+
 
                 </div>
 
@@ -123,27 +159,11 @@
 
             <div id="body-rest">
 
-                <h2 id="history">Project History</h2>
-                <p>On October 14th, 2014, Nicole Dufournaud, associate member of LaDéHis—EHSS and Bernard Michon, CRHIA-Université
-                    de Nantes presented a talk entitled "L’analyse des réseaux, une aide à penser : réflexions sur les stratégies
-                    économique et sociale de Marie Boucher, marchande à Nantes au XVIIe siècle" ("Network analysis, a Thinking
-                    Aid: Reflections on the Economic and Social Strategies of Marie Bucher, a 17th century Marchand from
-                    Nantes."). The talk was presented at the conference "Femmes et réseaux dans les sociétés modernes et
-                    contemporaines. Réalités et représentations" ("Women and Networks in Modern and Contemporary Societies")
-                    at the CEMMC (Centre d'Etudes des mondes modernes et contemporains) at the University Université Michel
-                    de Montaigne - Bordeaux 3.
-                </p>
-
-                <p>This talk resulted from a collaboration between Benjamin Bach (Microsoft Research — Inria Joint Center) and
-                    Pascal Cristofoli (LaDéHis CRH-EHESS). Based on this collaboration, the idea for the Vistorian was born.</p>
-
-
-
-                <div id="biblio">
+            <!-- <div id="biblio">
                  <h2>Bibliography</h2>
                  <p>This section lists literature in the field of network visualization and its application in the social sciences</p>
                 </div>
-            </div>
+            </div> -->
 
         </div>
         <div id="footer">
