@@ -55,7 +55,7 @@ p.warning{
 	border: 1px solid #d95f0e;
 	border-radius: 5px;
 	padding:10px;
-	font-style: italic;
+	/*font-style: italic;*/
 }
 
 div#div_info{
@@ -96,14 +96,14 @@ ul#menu li{
 }
 
 ul#menu a{
-	font-family: 'Helvetica Neue';
+	font-family: 'Lato', 'Helvetica Neue', sans-serif; 
 	font-size:12pt;
-	font-weight: 200;
+	font-weight: 100;
 	text-decoration: none;
 }
 
 ul#menu .menuicon{
-	margin-bottom: -10px;
+	margin-bottom: -13px;
 }
 
 
@@ -111,7 +111,7 @@ p.subtitle{
 	font-size: 17pt;
 	margin-bottom: 50px;
 	font-weight: 100; 
-	font-family: 'Helvetica Neue';
+	font-family: 'Helvetica Neue', sans-serif; 
 	color:#111111;
 	/*font-family: 'Lora';*/
 }
@@ -125,21 +125,22 @@ h1{
 	margin-top: 0px;
 	color: #d95f0e;
 	/*font-family: 'Amatic SC', Helvetica, sans-serif;*/
-	font-family: 'Helvetica Neue';
+	font-family: 'Lato', 'Helvetica Neue', sans-serif; 
 	/*font-weight: 100;*/
 }
 
 h2{
 	font-size: 13pt;
 	margin-top: 30px;
-	/*font-family: 'Amatic SC', Helvetica, sans-serif;*/
-	font-family: 'Helvetica Neue';
+	/*font-family: 'Helvetica Neue';*/
+	font-family: 'Lato', 'Helvetica Neue', sans-serif; 
 	color:#111111;
-	font-weight: 500;
-	background: #dddddd;
-	padding:4px;
+	font-weight: bold;
+	/*font-weight: 500;*/
+	background: #eee;
+	padding:10px;
 	padding-left:10px;
-	border-radius: 6px;
+	border-radius: 2px;
 }
 
 h3{
@@ -209,8 +210,9 @@ a.largeLink, a.largeLink{
 	font-weight: bold;
 	text-decoration: underline;
 	text-align: center;
-	font-size: 18pt;
-	font-family: 'Amatic SC', Helvetica, sans-serif;
+	font-size: 15pt;
+	font-family: 'Lato', Helvetica, sans-serif;
+	padding: 20px;
 }
 
 
