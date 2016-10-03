@@ -13,7 +13,7 @@ files = []
 for PATH in PATHS:	
 	for file in listdir(PATH):
 		if(file.endswith('.html')):	
-			print 'Modify file" '+ (PATH + file)
+			print('Modify file" '+ (PATH + file))
 			f = codecs.open(PATH + file, 'r')
 			content = str(f.read());
 			f.close();
