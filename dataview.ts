@@ -22,7 +22,6 @@ var visualizations = [
     ['Adjacency Matrix', 'matrix'],
     ['Dynamic Ego Network', 'dynamicego'],
     ['Map', 'map'],
-
 ]
 
 
@@ -115,11 +114,13 @@ function createNetwork() {
     loadNetworkList();
 }
 
-function setNodeTable(list) {
+function setNodeTable(list) 
+{
     var tableName = list.value;
     if (tableName != '---') {
         var table: vistorian.VTable = storage.getUserTable(tableName);
         currentNetwork.userNodeTable = table;
+        console.log('currentNetwork.userNodeTable', currentNetwork.userNodeTable)
         showTable(table, '#nodeTableDiv', false, currentNetwork.userNodeSchema)
     } else {
         unshowTable('#nodeTableDiv');
@@ -138,6 +139,7 @@ function setLinkTable(list) {
         currentNetwork.userLinkTable = undefined;
     }
 }
+
 function setLocationTable(list) {
     var tableName = list.value;
     if (tableName != '---') {
@@ -183,12 +185,11 @@ function saveCurrentNetwork(failSilently: boolean) {
         currentNetwork.timeFormat = $('#timeFormatInput_' + currentNetwork.userLinkSchema.name).val()
     }
 
-    console.log('currentNetwork.timeFormat', currentNetwork.timeFormat);
-
     // check dates if apply
     checkTimeFormatting(currentNetwork);
 
-    if (!currentNetwork.userNodeTable && !currentNetwork.userLinkTable) {
+    if (!currentNetwork.userNodeTable && !currentNetwork.userLinkTable) 
+    {
         if (!failSilently)
             showMessage("Cannot save without a Node table or a Link Table", 2000);
         return;
@@ -201,10 +202,14 @@ function saveCurrentNetwork(failSilently: boolean) {
         vistorian.cleanTable(currentNetwork.userLinkTable.data);
 
 
-    // get references to tables
-    var normalizedNodeTable: any[] = currentNetwork.networkCubeDataSet.nodeTable;
-    var normalizedLinkTable: any[] = currentNetwork.networkCubeDataSet.linkTable;
-    var normalizedLocationTable: any[] = currentNetwork.networkCubeDataSet.locationTable;
+    // get references to normalized tables
+    // var normalizedNodeTable: any[] = currentNetwork.networkCubeDataSet.nodeTable;
+    // var normalizedLinkTable: any[] = currentNetwork.networkCubeDataSet.linkTable;
+    // var normalizedLocationTable: any[] = currentNetwork.networkCubeDataSet.locationTable;
+    var normalizedNodeTable: any[] = [];
+    var normalizedLinkTable: any[] = [];
+    var normalizedLocationTable: any[] = [];
+
     var networkcubeNodeSchema: networkcube.NodeSchema = currentNetwork.networkCubeDataSet.nodeSchema;
     var networkcubeLinkSchema: networkcube.LinkSchema = currentNetwork.networkCubeDataSet.linkSchema;
     var networkcubeLocationSchema: networkcube.LocationSchema = currentNetwork.networkCubeDataSet.locationSchema;
@@ -220,12 +225,16 @@ function saveCurrentNetwork(failSilently: boolean) {
     }
     console.log('locationLabels', locationLabels);
 
-    // check for normalization of link table
+
+    // CONVERT SINGLE-LINK TABLE 
+
     var nodeIds: number[] = [];
     var names: string[] = [];
     var nodeLocations: number[][] = [];
     var nodeTimes: number[][] = [];
-    if (currentNetwork.userNodeTable == undefined) {
+    
+    if (currentNetwork.userNodeTable == undefined) 
+    {
         console.log('no node table found, create node table')
         var linkData = currentNetwork.userLinkTable.data;
         var id_source: number;
@@ -373,38 +382,43 @@ function saveCurrentNetwork(failSilently: boolean) {
         }
     }
 
-    if (currentNetwork.userNodeTable) {
-        networkcubeNodeSchema = new networkcube.NodeSchema(0);
-        networkcubeNodeSchema.id = currentNetwork.userNodeSchema.id;
-        networkcubeNodeSchema.label = currentNetwork.userNodeSchema.label;
-        if (networkcube.isValidIndex(currentNetwork.userNodeSchema.time)) {
-            networkcubeNodeSchema.time = currentNetwork.userNodeSchema.time;
-        }
-        if (networkcube.isValidIndex(currentNetwork.userNodeSchema.location)) {
-            networkcubeNodeSchema.location = currentNetwork.userNodeSchema.location;
-        }
-        if (networkcube.isValidIndex(currentNetwork.userNodeSchema.nodeType)) {
-            networkcubeNodeSchema.nodeType = currentNetwork.userNodeSchema.nodeType;
-        }
-    } else {
-        networkcubeNodeSchema = new networkcube.NodeSchema(0);
-        networkcubeNodeSchema.id = 0;
-        networkcubeNodeSchema.label = 1;
-        if (networkcube.isValidIndex(currentNetwork.userLinkSchema.time)) {
-            networkcubeNodeSchema.time = 2;
-        }
-        if (networkcube.isValidIndex(currentNetwork.userLinkSchema.location_source) || networkcube.isValidIndex(currentNetwork.userLinkSchema.location_target)) {
-            networkcubeNodeSchema.location = 3;
-        }
+    // if (currentNetwork.userNodeTable) 
+    // {
+    //     networkcubeNodeSchema = new networkcube.NodeSchema(0);
+    //     networkcubeNodeSchema.id = currentNetwork.userNodeSchema.id;
+    //     networkcubeNodeSchema.label = currentNetwork.userNodeSchema.label;
+    //     if (networkcube.isValidIndex(currentNetwork.userNodeSchema.time)) {
+    //         networkcubeNodeSchema.time = currentNetwork.userNodeSchema.time;
+    //     }
+    //     if (networkcube.isValidIndex(currentNetwork.userNodeSchema.location)) {
+    //         networkcubeNodeSchema.location = currentNetwork.userNodeSchema.location;
+    //     }
+    //     if (networkcube.isValidIndex(currentNetwork.userNodeSchema.nodeType)) {
+    //         networkcubeNodeSchema.nodeType = currentNetwork.userNodeSchema.nodeType;
+    //     }
+    // } 
+    // else 
+    // {
+    //     networkcubeNodeSchema = new networkcube.NodeSchema(0);
+    //     networkcubeNodeSchema.id = 0;
+    //     networkcubeNodeSchema.label = 1;
+    //     if (networkcube.isValidIndex(currentNetwork.userLinkSchema.time)) {
+    //         networkcubeNodeSchema.time = 2;
+    //     }
+    //     if (networkcube.isValidIndex(currentNetwork.userLinkSchema.location_source) || networkcube.isValidIndex(currentNetwork.userLinkSchema.location_target)) {
+    //         networkcubeNodeSchema.location = 3;
+    //     }
 
-    }
+    // }
 
+    // CHECK FOR SINGLE NODE-TABLE
 
-    // check for normalization of node table
-    if (currentNetwork.userLinkTable == undefined) {
+    if (currentNetwork.userLinkTable == undefined) 
+    {
         console.log('Create and fill link table')
         // create link table and fill
         var nodeData = currentNetwork.userNodeTable.data;
+        console.log('nodeData', nodeData)
         var nodeSchema: vistorian.VNodeSchema = currentNetwork.userNodeSchema;
         var id: number;
         var relCol: number;
@@ -418,7 +432,7 @@ function saveCurrentNetwork(failSilently: boolean) {
             networkcubeLinkSchema.time = 4;
 
 
-        // copy existing nodes into new table
+        // copy existing nodes into normalizedTable
         for (var i = 1; i < nodeData.length; i++) {
             newRow = [];
             id = parseInt(nodeData[i][nodeSchema.id]);
@@ -432,6 +446,7 @@ function saveCurrentNetwork(failSilently: boolean) {
         }
 
 
+        console.log('Create new links: ' + (nodeData.length * nodeSchema.relation.length), nodeData, nodeSchema.relation)
         for (var i = 1; i < nodeData.length; i++) {
 
             // create relations in link table
@@ -481,8 +496,8 @@ function saveCurrentNetwork(failSilently: boolean) {
                 // console.log('create edge row', newRow);
 
             }
-
         }
+        console.log('normalizedLinkTable', normalizedLinkTable)
     }
 
 
@@ -540,6 +555,71 @@ function saveCurrentNetwork(failSilently: boolean) {
 
     loadNetworkList();
 }
+
+
+// function normalizeLinkTable(n:vistorian.Network)
+// {
+
+// }
+
+// function normalizeNodeTable(n:vistorian.Network)
+// {
+
+// }
+
+// function createLinkTableFromNodeTable(n:vistorian.Network)
+// {
+
+// }
+
+// function createNodeTableFromLinkTable(n:vistorian.Network)
+// {
+//     // Create node table
+//     var linkData = currentNetwork.userLinkTable.data;
+//     var id_source: number;
+//     var id_target: number;
+//     var name: string;
+//     var loc: string;
+//     var linkSchema: vistorian.VLinkSchema = currentNetwork.userLinkSchema;
+//     var timeString: string;
+//     var timeFormatted: string;
+    
+//     var nodeIds: number[] = [];
+//     var nodeNames: string[] = [];
+//     var nodeLocations: number[][] = [];
+//     var nodeTimes: number[][] = [];
+
+//     for (var i = 1; i < linkData.length; i++) {
+
+//         // source node
+//         name = linkData[i][linkSchema.source];
+//         if (nodeNames.indexOf(name) < 0) {
+//             id_source = nodeIds.length
+            
+//             nodeNames.push(name);
+//             nodeIds.push(id_source);
+//             nodeLocations.push([]);
+//             nodeTimes.push([]);
+//         }
+
+//         // target node
+//         name = linkData[i][linkSchema.target];
+//         if (nodeNames.indexOf(name) < 0) {
+//             id_target = nodeIds.length;
+            
+//             nodeNames.push(name);
+//             nodeIds.push(id_target);
+//             nodeLocations.push([]);
+//             nodeTimes.push([]);
+//         }
+
+//         // link time? 
+
+//     }
+
+//     // Create node 
+// }
+
 
 function deleteCurrentNetwork() {
     storage.deleteNetwork(currentNetwork);

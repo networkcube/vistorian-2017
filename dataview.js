@@ -70,6 +70,7 @@ function setNodeTable(list) {
     if (tableName != '---') {
         var table = storage.getUserTable(tableName);
         currentNetwork.userNodeTable = table;
+        console.log('currentNetwork.userNodeTable', currentNetwork.userNodeTable);
         showTable(table, '#nodeTableDiv', false, currentNetwork.userNodeSchema);
     }
     else {
@@ -125,7 +126,6 @@ function saveCurrentNetwork(failSilently) {
     if (currentNetwork.userLinkSchema.time != -1) {
         currentNetwork.timeFormat = $('#timeFormatInput_' + currentNetwork.userLinkSchema.name).val();
     }
-    console.log('currentNetwork.timeFormat', currentNetwork.timeFormat);
     checkTimeFormatting(currentNetwork);
     if (!currentNetwork.userNodeTable && !currentNetwork.userLinkTable) {
         if (!failSilently)
@@ -136,9 +136,9 @@ function saveCurrentNetwork(failSilently) {
         vistorian.cleanTable(currentNetwork.userNodeTable.data);
     if (currentNetwork.userLinkTable)
         vistorian.cleanTable(currentNetwork.userLinkTable.data);
-    var normalizedNodeTable = currentNetwork.networkCubeDataSet.nodeTable;
-    var normalizedLinkTable = currentNetwork.networkCubeDataSet.linkTable;
-    var normalizedLocationTable = currentNetwork.networkCubeDataSet.locationTable;
+    var normalizedNodeTable = [];
+    var normalizedLinkTable = [];
+    var normalizedLocationTable = [];
     var networkcubeNodeSchema = currentNetwork.networkCubeDataSet.nodeSchema;
     var networkcubeLinkSchema = currentNetwork.networkCubeDataSet.linkSchema;
     var networkcubeLocationSchema = currentNetwork.networkCubeDataSet.locationSchema;
@@ -269,34 +269,10 @@ function saveCurrentNetwork(failSilently) {
             }
         }
     }
-    if (currentNetwork.userNodeTable) {
-        networkcubeNodeSchema = new networkcube.NodeSchema(0);
-        networkcubeNodeSchema.id = currentNetwork.userNodeSchema.id;
-        networkcubeNodeSchema.label = currentNetwork.userNodeSchema.label;
-        if (networkcube.isValidIndex(currentNetwork.userNodeSchema.time)) {
-            networkcubeNodeSchema.time = currentNetwork.userNodeSchema.time;
-        }
-        if (networkcube.isValidIndex(currentNetwork.userNodeSchema.location)) {
-            networkcubeNodeSchema.location = currentNetwork.userNodeSchema.location;
-        }
-        if (networkcube.isValidIndex(currentNetwork.userNodeSchema.nodeType)) {
-            networkcubeNodeSchema.nodeType = currentNetwork.userNodeSchema.nodeType;
-        }
-    }
-    else {
-        networkcubeNodeSchema = new networkcube.NodeSchema(0);
-        networkcubeNodeSchema.id = 0;
-        networkcubeNodeSchema.label = 1;
-        if (networkcube.isValidIndex(currentNetwork.userLinkSchema.time)) {
-            networkcubeNodeSchema.time = 2;
-        }
-        if (networkcube.isValidIndex(currentNetwork.userLinkSchema.location_source) || networkcube.isValidIndex(currentNetwork.userLinkSchema.location_target)) {
-            networkcubeNodeSchema.location = 3;
-        }
-    }
     if (currentNetwork.userLinkTable == undefined) {
         console.log('Create and fill link table');
         var nodeData = currentNetwork.userNodeTable.data;
+        console.log('nodeData', nodeData);
         var nodeSchema = currentNetwork.userNodeSchema;
         var id;
         var relCol;
@@ -316,6 +292,7 @@ function saveCurrentNetwork(failSilently) {
             newRow.push(nodeData[i][nodeSchema.label]);
             normalizedNodeTable[id] = newRow;
         }
+        console.log('Create new links: ' + (nodeData.length * nodeSchema.relation.length), nodeData, nodeSchema.relation);
         for (var i = 1; i < nodeData.length; i++) {
             for (var j = 0; j < nodeSchema.relation.length; j++) {
                 relCol = nodeSchema.relation[j];
@@ -347,6 +324,7 @@ function saveCurrentNetwork(failSilently) {
                 normalizedLinkTable.push(newRow);
             }
         }
+        console.log('normalizedLinkTable', normalizedLinkTable);
     }
     if (currentNetwork.userLinkTable) {
         for (var field in currentNetwork.userLinkSchema) {
