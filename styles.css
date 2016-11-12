@@ -1,7 +1,7 @@
 body{
-	font-family: Helvetica, sans-serif;
+	font-family: "Helvetica Neue", Helvetica, sans-serif;
 	font-size: 11pt;
-	font-weight: 100;
+	font-weight: 200;
 	background: #fff;
 }
 
@@ -266,3 +266,38 @@ select.schemaSelection{
 	margin-left: 10px;
 	cursor:pointer;
 }
+
+
+/*/*TOOL TIPS*/
+/* Tooltip text */
+/*.tooltiptext {
+    visibility: hidden;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    padding: 5px 5px;
+    border-radius: 6px;
+
+    position: absolute;
+    z-index: 1;
+    margin-top:-25px;
+    margin-left:50px;
+	opacity: 0.8;
+}
+
+.tooltiptext::after {
+    content: " ";
+    position: absolute;
+    top: 50%;
+    right: 100%;
+    margin-top: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent black transparent transparent;
+}
+
+.hastooltip:hover .tooltiptext {
+    visibility: visible;
+}
+*/
+

@@ -44,12 +44,19 @@ function loadVisualizationList() {
     // create visualization links
     visualizations.forEach(function(v) {
         $('#visualizationList')
-            .append('<li class="visLink">\<button onclick="loadVisualization(\'' + v[1] + '\')" class="visbutton"><img src="logos/vis-' + v[1] + '.png" class="menuicon"/>' + v[0] + '</button></li>')
+            .append('<li class="visLink" title="Show '+v[0]+' visualization.">\
+                        <button onclick="loadVisualization(\'' + v[1] + '\')" class="visbutton hastooltip">\
+                            <img src="logos/vis-' + v[1] + '.png" class="menuicon" />' 
+                            + v[0] + '\
+                        </button>\
+                    </li>')
     })
     $('#visualizationList')
-        .append('<li class="visLink"><button onclick="loadVisualization(\'mat-nl\')" class="visbutton"><img src="logos/mat-nl.png" class="menuicon"/>Matrix + Node Link</button></li>')
+        .append('<li class="visLink" title="Show matrix and node-link split-view."><button onclick="loadVisualization(\'mat-nl\')" class="visbutton hastooltip"><img src="logos/mat-nl.png" class="menuicon"/>Matrix + Node Link\
+        </button></li>')
     $('#visualizationList')
-        .append('<li class="visLink"><button onclick="loadVisualization(\'tileview\')" class="visbutton"><img src="logos/tiled.png" class="menuicon"/>All</button></li>')
+        .append('<li class="visLink" title="Show all visualizations."><button onclick="loadVisualization(\'tileview\')" class="visbutton hastooltip"><img src="logos/tiled.png" class="menuicon"/>All\
+        </button></li>')
 }
 
 
@@ -76,7 +83,9 @@ function loadNetworkList() {
         network = storage.getNetwork(t);
         $('#networkList').append('\
             <li>\
-                <a onclick="showNetwork(\'' + network.id + '\')"  class="underlined">' + network.name + '</a><img src="logos/delete.png" onclick="removeNetwork(\''+ network.id +'\')"/><img src="logos/download.png" onclick="exportNetwork(\''+ network.id +'\')"/>\
+                <a onclick="showNetwork(\'' + network.id + '\')"  class="underlined">' + network.name + '</a>\
+                <img title="Delete this network." src="logos/delete.png" onclick="removeNetwork(\''+ network.id +'\')"/>\
+                <img title="Download this network in JSON format." src="logos/download.png" onclick="exportNetwork(\''+ network.id +'\')"/>\
             </li>')
     })
 }
@@ -649,9 +658,9 @@ function showNetwork(networkId: number) {
     // he wants to create his network from.
     var tables = storage.getUserTables()
 
-    $('#nodetableSelect').append('<option>---</option>')
-    $('#linktableSelect').append('<option>---</option>')
-    $('#locationtableSelect').append('<option>---</option>')
+    $('#nodetableSelect').append('<option class="tableSelection">---</option>')
+    $('#linktableSelect').append('<option class="tableSelection">---</option>')
+    $('#locationtableSelect').append('<option class="tableSelection">---</option>')
 
     tables.forEach(t => {
         $('#nodetableSelect')
@@ -748,8 +757,8 @@ function showTable(table: vistorian.VTable, elementName: string, isLocationTable
     var tableDiv = $('<div id="div_' + tableId + '"></div>');
     $(elementName).append(tableDiv);
 
-    var tableMenu = $('<div class="tableMenu"></div>');
-    tableDiv.append(tableMenu);
+    var tableMenu = $(elementName).prev()
+    // tableDiv.append(tableMenu);
 
     var data = table.data
     if(data.length > DATA_TABLE_MAX_LENGTH){
@@ -1342,9 +1351,9 @@ var msgBox;
 function showMessage(message: string, timeout) {
     if ($('.messageBox'))
         $('.messageBox').remove();
+
     msgBox = $('<div class="messageBox"></div>');
-    msgBox.append('<p>' + message + '<p>');
-    msgBox.css('left', (window.innerWidth - 600) / 2)
+    msgBox.append('<div><p>' + message + '</p></div>');
     $('body').append(msgBox);
     msgBox.click(function() {
         $('.messageBox').remove();
