@@ -70,9 +70,8 @@ function createNetwork() {
     currentNetwork = new vistorian.Network(id);
     currentNetwork.name = 'New Network ' + currentNetwork.id;
     storage.saveNetwork(currentNetwork);
-    showNetwork(currentNetwork.id);
-    saveCurrentNetwork(true);
-    loadNetworkList();
+    $('#chooseNetworktype').css('display', 'block');
+    $('#networkTables').css('display', 'none');
 }
 function setNodeTable(list) {
     var tableName = list.value;
@@ -395,6 +394,13 @@ function showNetwork(networkId) {
     $('#nodetableSelect').append('<option class="tableSelection">---</option>');
     $('#linktableSelect').append('<option class="tableSelection">---</option>');
     $('#locationtableSelect').append('<option class="tableSelection">---</option>');
+    $('#nodeTableContainer').css('display', 'inline');
+    $('#linkTableContainer').css('display', 'inline');
+    if (currentNetwork.networkConfig.indexOf('node') > -1) {
+        $('#linkTableContainer').css('display', 'none');
+    }
+    if (currentNetwork.networkConfig.indexOf('link') > -1)
+        $('#nodeTableContainer').css('display', 'none');
     tables.forEach(function (t) {
         $('#nodetableSelect')
             .append('<option value="' + t.name + '">' + t.name + '</option>');
@@ -454,6 +460,7 @@ function showTable(table, elementName, isLocationTable, schema) {
     var tableDiv = $('<div id="div_' + tableId + '"></div>');
     $(elementName).append(tableDiv);
     var tableMenu = $(elementName).prev();
+    tableMenu.find('.tableMenuButton').remove();
     var data = table.data;
     if (data.length > DATA_TABLE_MAX_LENGTH) {
         var info = $('<p>Table shows first 200 rows out of ' + data.length + ' rows in total.</p>');
@@ -463,14 +470,9 @@ function showTable(table, elementName, isLocationTable, schema) {
     tableMenu.append(csvExportButton);
     var extractLocationCoordinatesButton;
     if (isLocationTable) {
-        extractLocationCoordinatesButton = $('<button class="tableMenuButton" onclick="updateLocations()">Update location coordinates</button>');
+        tableMenu.append($('<button class="tableMenuButton" onclick="updateLocations()">Update location coordinates</button>'));
+        tableMenu.append($('<button class="tableMenuButton" onclick="extractLocations()">Extract locations</button>'));
     }
-    else {
-        extractLocationCoordinatesButton = $('<button class="tableMenuButton" onclick="extractLocations()">Extract locations</button>');
-    }
-    tableMenu.append(extractLocationCoordinatesButton);
-    tableMenu.append('<div id="datatable_' + table.name + '_tool" ></div>');
-    tableMenu.append('<div id="datatable_' + table.name + '_error" ></div>');
     var tab = $('<table id="' + tableId + '">');
     tableDiv.append(tab);
     tab.addClass('datatable stripe hover cell-border and order-column compact');
@@ -814,4 +816,11 @@ function removeNetwork(networkId) {
 }
 function exportNetwork(networkId) {
     vistorian.exportNetwork(storage.getNetwork(networkId));
+}
+function setNetworkConfig(string) {
+    currentNetwork.networkConfig = string;
+    $('#chooseNetworktype').css('display', 'none');
+    storage.saveNetwork(currentNetwork);
+    loadNetworkList();
+    showNetwork(currentNetwork.id);
 }

@@ -113,6 +113,7 @@ module vistorian {
         userLocationTable: VTable;
         userLocationSchema: networkcube.LocationSchema;
         networkCubeDataSet: networkcube.DataSet;
+        networkConfig:string = 'both';
         timeFormat: string;
 
         constructor(id: number) {

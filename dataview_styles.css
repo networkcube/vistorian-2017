@@ -50,6 +50,11 @@ p.title{
     border-radius: 2px;
 }
 
+#networkInfoDiv p{
+    font-size: 16pt;
+    font-weight: 700;
+}
+
 .visLink{
     margin-top: 5px;
 }
@@ -63,7 +68,7 @@ p.title{
     height: 12pt;
 }
 
-button.tableMenuButton{
+.tableMenuButton{
     float:right;
     margin-left: 10px;
     /*background-color:#E17F3E;*/
@@ -143,6 +148,21 @@ option.tableSelection{
     padding-top: 300px;
     text-align: center;
     margin:auto;
+}
+
+.tablePic{
+    height: 150px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    outline: solid 1px #ddd;
+    padding: 30px;
+ }
+.tablePic:hover{
+    height: 150px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    outline: solid 1px #000;
+    padding: 30px;
 }
 
 

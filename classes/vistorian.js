@@ -84,6 +84,7 @@ var vistorian;
     vistorian.VLocationSchema = VLocationSchema;
     var Network = (function () {
         function Network(id) {
+            this.networkConfig = 'both';
             this.id = id;
             this.userNodeSchema = new VNodeSchema();
             this.userLinkSchema = new VLinkSchema();

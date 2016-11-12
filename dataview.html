@@ -60,35 +60,41 @@
             <div id="networkTables" style="display:none;">
 
                 <div id="networkInfoDiv">
-                    <p class="title">Name Network: <input id="networknameInput" type="text" size="80"/>
-                    <input id="saveNetworkButton" type="button" value="Save" onclick="saveCurrentNetwork(false)"/>
-                    <input id="deleteNetworkButton" type="button" value="Delete" onclick="deleteCurrentNetwork()"/>
+                    <p class="title">Network Name: <input id="networknameInput" type="text" size="80"/>
+                    <input id="saveNetworkButton" class="tableMenuButton" type="button" value="Save" onclick="saveCurrentNetwork(false)"/>
+                    <input id="deleteNetworkButton" class="tableMenuButton" type="button" value="Delete" onclick="deleteCurrentNetwork()"/>
                     </p>
                 </div>
 
                 <!-- Show Node table here -->
-                <p class="title tableMenu" >Node Table:
-                <select id="nodetableSelect" onchange="setNodeTable(this)">
-                    <option>---</option>
-                </select>
-                </p>
-                <div id="nodeTableDiv"></div>
-
-                <!-- Show link table here -->
-                <p class="title tableMenu">Link Table: 
-                <select id="linktableSelect" onchange="setLinkTable(this)">
-                    <option>---</option>
-                </select>
-                </p>
-                <div id="linkTableDiv"></div>
-    
-                <!-- Show location table here -->
-                <p class="title tableMenu">Select Location Table: 
-                    <select id="locationtableSelect" onchange="setLocationTable(this)">
+                <div id="nodeTableContainer">
+                    <p class="title tableMenu" >Node Table:
+                    <select id="nodetableSelect" onchange="setNodeTable(this)">
                         <option>---</option>
                     </select>
-                </p>
-                <div id="locationTableDiv"></div>
+                    </p>
+                    <div id="nodeTableDiv"></div>
+                </div>
+
+                <!-- Show link table here -->
+                <div id="linkTableContainer">
+                    <p class="title tableMenu">Link Table: 
+                    <select id="linktableSelect" onchange="setLinkTable(this)">
+                        <option>---</option>
+                    </select>
+                    </p>
+                    <div id="linkTableDiv"></div>
+                </div>
+
+                <!-- Show location table here -->
+                <div id="locationTableContainer">
+                    <p class="title tableMenu">Select Location Table: 
+                        <select id="locationtableSelect" onchange="setLocationTable(this)">
+                            <option>---</option>
+                        </select>
+                    </p>
+                    <div id="locationTableDiv"></div>
+                </div>
 
             </div>
 
@@ -98,6 +104,15 @@
                     </p>
                 </div>
                 <div id="individualTable"></div>
+
+            </div>
+
+            <div id="chooseNetworktype" style="display:none;">
+                <h2>Create new network</h2>
+                <p>Which of the below form has your data?</p>
+                <img src="figures/node-table.png" alt="" class="tablePic" onclick="setNetworkConfig('node')">
+                <img src="figures/link-table.png" alt="" class="tablePic" onclick="setNetworkConfig('link')">
+                <img src="figures/both-table.png" alt="" class="tablePic" onclick="setNetworkConfig('both')">
 
             </div>
 

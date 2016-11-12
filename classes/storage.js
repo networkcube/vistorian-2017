@@ -106,7 +106,9 @@ var storage;
             networkIds.push(network.id);
             saveNetworkIds(networkIds);
         }
+        console.log('save network', network);
         $.jStorage.set(SESSION_NAME + SEP + SESSION_NETWORK + SEP + network.id, network);
+        console.log('GET network', getNetwork(network.id));
     }
     storage.saveNetwork = saveNetwork;
     function getNetworkIds() {

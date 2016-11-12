@@ -117,11 +117,10 @@ function createNetwork() {
     currentNetwork.name = 'New Network ' + currentNetwork.id;
     storage.saveNetwork(currentNetwork);
 
-    showNetwork(currentNetwork.id)
-    
-    saveCurrentNetwork(true);
-    loadNetworkList();
+    $('#chooseNetworktype').css('display', 'block')
+    $('#networkTables').css('display', 'none')
 }
+
 
 function setNodeTable(list) 
 {
@@ -662,6 +661,18 @@ function showNetwork(networkId: number) {
     $('#linktableSelect').append('<option class="tableSelection">---</option>')
     $('#locationtableSelect').append('<option class="tableSelection">---</option>')
 
+    $('#nodeTableContainer').css('display', 'inline')
+    $('#linkTableContainer').css('display', 'inline')
+
+
+    if(currentNetwork.networkConfig.indexOf('node') > -1)
+    {
+        $('#linkTableContainer').css('display', 'none')
+    }
+    if(currentNetwork.networkConfig.indexOf('link') > -1)
+        $('#nodeTableContainer').css('display', 'none')
+
+
     tables.forEach(t => {
         $('#nodetableSelect')
             .append('<option value="' + t.name + '">' + t.name + '</option>')
@@ -758,6 +769,7 @@ function showTable(table: vistorian.VTable, elementName: string, isLocationTable
     $(elementName).append(tableDiv);
 
     var tableMenu = $(elementName).prev()
+    tableMenu.find('.tableMenuButton').remove();
     // tableDiv.append(tableMenu);
 
     var data = table.data
@@ -774,19 +786,17 @@ function showTable(table: vistorian.VTable, elementName: string, isLocationTable
     // location extraction button
     var extractLocationCoordinatesButton
     if (isLocationTable) {
-        extractLocationCoordinatesButton = $('<button class="tableMenuButton" onclick="updateLocations()">Update location coordinates</button>')
-    } else {
-        extractLocationCoordinatesButton = $('<button class="tableMenuButton" onclick="extractLocations()">Extract locations</button>')
+        tableMenu.append($('<button class="tableMenuButton" onclick="updateLocations()">Update location coordinates</button>'))
+        tableMenu.append($('<button class="tableMenuButton" onclick="extractLocations()">Extract locations</button>'))
     }
-    tableMenu.append(extractLocationCoordinatesButton);
-
+    
     // replace function
     // tableMenu.append('Replace <input id="replace_pattern" type="text"/> by <input type="text" id="replace_value"/><input id="replaceButton" type="button" class="tableMenuButton" onclick="replaceCellContents(\''+tableId+'\')" value="Replace"/>');
 
 
     // table status
-    tableMenu.append('<div id="datatable_' + table.name + '_tool" ></div>');
-    tableMenu.append('<div id="datatable_' + table.name + '_error" ></div>');
+    // tableMenu.append('<div id="datatable_' + table.name + '_tool" ></div>');
+    // tableMenu.append('<div id="datatable_' + table.name + '_error" ></div>');
 
     // create table
 
@@ -1407,4 +1417,16 @@ function removeNetwork(networkId:string){
 
 function exportNetwork(networkId:string){
     vistorian.exportNetwork(storage.getNetwork(networkId))
+}
+
+function setNetworkConfig(string){
+    currentNetwork.networkConfig = string;
+
+    $('#chooseNetworktype').css('display', 'none')
+    
+    storage.saveNetwork(currentNetwork);
+    loadNetworkList();
+
+    showNetwork(currentNetwork.id)
+
 }
