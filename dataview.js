@@ -112,6 +112,7 @@ function setLocationTable(list) {
     }
 }
 function saveCurrentNetwork(failSilently) {
+    console.log('Save current network');
     var networkcubeDataSet;
     saveCellChanges();
     if (currentNetwork.networkCubeDataSet == undefined) {
@@ -371,6 +372,7 @@ function saveCurrentNetwork(failSilently) {
     currentNetwork.networkCubeDataSet.nodeSchema = networkcubeNodeSchema;
     storage.saveNetwork(currentNetwork);
     networkcube.setDataManagerOptions({ keepOnlyOneSession: true });
+    console.log('>> START IMPORT');
     networkcube.importData(SESSION_NAME, currentNetwork.networkCubeDataSet);
     console.log('>> IMPORTED: ', currentNetwork.networkCubeDataSet);
     loadNetworkList();
@@ -399,8 +401,9 @@ function showNetwork(networkId) {
     if (currentNetwork.networkConfig.indexOf('node') > -1) {
         $('#linkTableContainer').css('display', 'none');
     }
-    if (currentNetwork.networkConfig.indexOf('link') > -1)
+    if (currentNetwork.networkConfig.indexOf('link') > -1) {
         $('#nodeTableContainer').css('display', 'none');
+    }
     tables.forEach(function (t) {
         $('#nodetableSelect')
             .append('<option value="' + t.name + '">' + t.name + '</option>');
@@ -423,7 +426,6 @@ function showNetwork(networkId) {
     }
     $('#tileViewLink').attr('href', 'sites/tileview.html?session=' + SESSION_NAME + '&datasetName=' + currentNetwork.name.split(' ').join('___'));
     $('#mat-nlViewLink').attr('href', 'sites/mat-nl.html?session=' + SESSION_NAME + '&datasetName=' + currentNetwork.name.split(' ').join('___'));
-    saveCurrentNetwork(false);
 }
 function unshowNetwork() {
     $('#noNetworkTables').css('display', 'block');
@@ -468,10 +470,10 @@ function showTable(table, elementName, isLocationTable, schema) {
     }
     var csvExportButton = $('<button class="tableMenuButton" onclick="exportCurrentTableCSV(\'' + table.name + '\')">Export as CSV</button>');
     tableMenu.append(csvExportButton);
+    tableMenu.append($('<button class="tableMenuButton" onclick="extractLocations()">Extract locations</button>'));
     var extractLocationCoordinatesButton;
     if (isLocationTable) {
         tableMenu.append($('<button class="tableMenuButton" onclick="updateLocations()">Update location coordinates</button>'));
-        tableMenu.append($('<button class="tableMenuButton" onclick="extractLocations()">Extract locations</button>'));
     }
     var tab = $('<table id="' + tableId + '">');
     tableDiv.append(tab);
@@ -593,14 +595,17 @@ function deleteCurrentTable() {
     loadTableList();
 }
 function schemaSelectionChanged(field, columnNumber, schemaName, parent) {
+    console.log('schemaSelectionChanged', field, columnNumber, schemaName);
     for (var field2 in currentNetwork[schemaName]) {
         if (field2 == 'relation' && currentNetwork[schemaName][field2].indexOf(columnNumber) > -1) {
             var arr = currentNetwork[schemaName][field];
             currentNetwork[schemaName][field2].slice(arr.indexOf(columnNumber), 0);
         }
-        else if (currentNetwork[schemaName][field2] == columnNumber) {
-            console.log('set ', field2, 'to -1');
-            currentNetwork[schemaName][field2] = -1;
+        else {
+            if (currentNetwork[schemaName][field2] == columnNumber) {
+                console.log('set ', field2, 'to -1');
+                currentNetwork[schemaName][field2] = -1;
+            }
         }
     }
     if (field == 'relation') {

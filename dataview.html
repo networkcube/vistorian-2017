@@ -9,7 +9,7 @@
     <link rel="stylesheet" type="text/css" href="./dataview_styles.css"/>
     <link rel="stylesheet" type="text/css" href="./tablestyle.css"/>
     <!-- <script src="lib/jquery.js"></script> -->
-    <script src="https://networkcube.github.io/networkcube/core/networkcube.js"></script>
+    <script src="http://localhost/~bbach/networkcube-all-public/networkcube/core/networkcube.js"></script>
     <link rel="stylesheet" href="lib/jquery-ui.css">
     <script src="lib/jquery-ui.js"></script>
 </head>
@@ -110,8 +110,16 @@
             <div id="chooseNetworktype" style="display:none;">
                 <h2>Create new network</h2>
                 <p>Which of the below form has your data?</p>
+
+                <h3>a) Node-Table Format:</h3>
                 <img src="figures/node-table.png" alt="" class="tablePic" onclick="setNetworkConfig('node')">
+                <br/>
+                <br/>
+                <h3>b) Link-Table Format:</h3>
                 <img src="figures/link-table.png" alt="" class="tablePic" onclick="setNetworkConfig('link')">
+                <br/>
+                <br/>
+                <h3>c) Node- and Link-Table Format:</h3>
                 <img src="figures/both-table.png" alt="" class="tablePic" onclick="setNetworkConfig('both')">
 
             </div>

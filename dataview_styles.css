@@ -151,18 +151,12 @@ option.tableSelection{
 }
 
 .tablePic{
-    height: 150px;
-    margin-right: 10px;
-    margin-bottom: 10px;
-    outline: solid 1px #ddd;
-    padding: 30px;
+    height: 100px;
+    padding: 10px;
+    padding-left: 4px;
  }
 .tablePic:hover{
-    height: 150px;
-    margin-right: 10px;
-    margin-bottom: 10px;
-    outline: solid 1px #000;
-    padding: 30px;
+    outline: solid 3px #000;
 }
 
 

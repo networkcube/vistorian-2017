@@ -299,6 +299,7 @@ module vistorian {
     }
 
 
+
     // function updateEntryToLocationTable(index: number, geoname: string, locationTable: VTable, locationSchema: networkcube.LocationSchema) {
     //     return updateEntryToLocationTableOSM(index, geoname, locationTable, locationSchema);
     // }
@@ -458,12 +459,15 @@ module vistorian {
 
 
     export function cleanTable(table: any[][]) {
+        // trim entries
+        var emptyColBool = [] 
         for (var i = 0; i < table.length; i++) {
-            for (var j = 0; j < table.length; j++) {
+            for (var j = 0; j < table[i].length; j++) {
                 if (table[i][j] != undefined)
                     table[i][j] = table[i][j].trim();
             }
         }
+
     }
 
 

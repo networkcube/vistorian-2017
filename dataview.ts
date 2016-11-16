@@ -165,6 +165,8 @@ function setLocationTable(list) {
 // saves/updates and normalizes current network.
 function saveCurrentNetwork(failSilently: boolean) {
 
+    console.log('Save current network')
+
     var networkcubeDataSet: networkcube.DataSet;
 
     saveCellChanges();
@@ -556,8 +558,9 @@ function saveCurrentNetwork(failSilently: boolean) {
     // console.log('[vistorian] network created', networkcubeDataSet);
 
     storage.saveNetwork(currentNetwork);
-    // showNetwork(currentNetwork.id);
+
     networkcube.setDataManagerOptions({ keepOnlyOneSession: true });
+    console.log('>> START IMPORT');
     networkcube.importData(SESSION_NAME, currentNetwork.networkCubeDataSet);
     console.log('>> IMPORTED: ', currentNetwork.networkCubeDataSet);
 
@@ -670,7 +673,9 @@ function showNetwork(networkId: number) {
         $('#linkTableContainer').css('display', 'none')
     }
     if(currentNetwork.networkConfig.indexOf('link') > -1)
+    {
         $('#nodeTableContainer').css('display', 'none')
+    }
 
 
     tables.forEach(t => {
@@ -700,7 +705,7 @@ function showNetwork(networkId: number) {
     $('#tileViewLink').attr('href', 'sites/tileview.html?session=' + SESSION_NAME + '&datasetName=' + currentNetwork.name.split(' ').join('___'))
     $('#mat-nlViewLink').attr('href', 'sites/mat-nl.html?session=' + SESSION_NAME + '&datasetName=' + currentNetwork.name.split(' ').join('___'))
 
-    saveCurrentNetwork(false);
+    // saveCurrentNetwork(true);
     // storage.saveNetwork(currentNetwork);
     // MarieBoucherTest.run(SESSION_NAME, currentNetwork.name);
 
@@ -782,13 +787,14 @@ function showTable(table: vistorian.VTable, elementName: string, isLocationTable
     // export button
     var csvExportButton = $('<button class="tableMenuButton" onclick="exportCurrentTableCSV(\'' + table.name + '\')">Export as CSV</button>')
     tableMenu.append(csvExportButton);
+    tableMenu.append($('<button class="tableMenuButton" onclick="extractLocations()">Extract locations</button>'))
 
     // location extraction button
     var extractLocationCoordinatesButton
     if (isLocationTable) {
         tableMenu.append($('<button class="tableMenuButton" onclick="updateLocations()">Update location coordinates</button>'))
-        tableMenu.append($('<button class="tableMenuButton" onclick="extractLocations()">Extract locations</button>'))
     }
+
     
     // replace function
     // tableMenu.append('Replace <input id="replace_pattern" type="text"/> by <input type="text" id="replace_value"/><input id="replaceButton" type="button" class="tableMenuButton" onclick="replaceCellContents(\''+tableId+'\')" value="Replace"/>');
@@ -1094,18 +1100,19 @@ function deleteCurrentTable() {
 // called when the user assigns a schema in an table
 function schemaSelectionChanged(field: string, columnNumber: number, schemaName: string, parent: HTMLElement) {
 
-    // console.log('schemaSelectionChanged', field, columnNumber, schemaName)
+    console.log('schemaSelectionChanged', field, columnNumber, schemaName)
 
     // reset schema:
     for (var field2 in currentNetwork[schemaName]) {
         if (field2 == 'relation' && currentNetwork[schemaName][field2].indexOf(columnNumber) > -1) {
             var arr = currentNetwork[schemaName][field]
             currentNetwork[schemaName][field2].slice(arr.indexOf(columnNumber), 0);
-        } else
+        } else {
             if (currentNetwork[schemaName][field2] == columnNumber) {
                 console.log('set ', field2, 'to -1');
                 currentNetwork[schemaName][field2] = -1;
             }
+        }
     }
 
     if (field == 'relation') {
@@ -1113,7 +1120,7 @@ function schemaSelectionChanged(field: string, columnNumber: number, schemaName:
     } else if (field != '---') {
         currentNetwork[schemaName][field] = columnNumber;
     }
-    
+
     saveCurrentNetwork(false);
     showNetwork(currentNetwork.id)
 }
@@ -1403,6 +1410,7 @@ function clearCache(){
     // networkcube.clearAllDataManagerSessionCaches();    
     
     localStorage.clear();
+    // vistorian.clearCache();
     
     $('#tableList').empty()
     $('#networkList').empty()
@@ -1420,6 +1428,7 @@ function exportNetwork(networkId:string){
 }
 
 function setNetworkConfig(string){
+
     currentNetwork.networkConfig = string;
 
     $('#chooseNetworktype').css('display', 'none')
