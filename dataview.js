@@ -20,12 +20,19 @@ function init() {
 function loadVisualizationList() {
     visualizations.forEach(function (v) {
         $('#visualizationList')
-            .append('<li class="visLink">\<button onclick="loadVisualization(\'' + v[1] + '\')" class="visbutton"><img src="logos/vis-' + v[1] + '.png" class="menuicon"/>' + v[0] + '</button></li>');
+            .append('<li class="visLink" title="Show ' + v[0] + ' visualization.">\
+                        <button onclick="loadVisualization(\'' + v[1] + '\')" class="visbutton hastooltip">\
+                            <img src="logos/vis-' + v[1] + '.png" class="menuicon" />'
+            + v[0] + '\
+                        </button>\
+                    </li>');
     });
     $('#visualizationList')
-        .append('<li class="visLink"><button onclick="loadVisualization(\'mat-nl\')" class="visbutton"><img src="logos/mat-nl.png" class="menuicon"/>Matrix + Node Link</button></li>');
+        .append('<li class="visLink" title="Show matrix and node-link split-view."><button onclick="loadVisualization(\'mat-nl\')" class="visbutton hastooltip"><img src="logos/mat-nl.png" class="menuicon"/>Matrix + Node Link\
+        </button></li>');
     $('#visualizationList')
-        .append('<li class="visLink"><button onclick="loadVisualization(\'tileview\')" class="visbutton"><img src="logos/tiled.png" class="menuicon"/>All</button></li>');
+        .append('<li class="visLink" title="Show all visualizations."><button onclick="loadVisualization(\'tileview\')" class="visbutton hastooltip"><img src="logos/tiled.png" class="menuicon"/>All\
+        </button></li>');
 }
 function loadTableList() {
     $('#tableList').empty();
@@ -45,7 +52,9 @@ function loadNetworkList() {
         network = storage.getNetwork(t);
         $('#networkList').append('\
             <li>\
-                <a onclick="showNetwork(\'' + network.id + '\')"  class="underlined">' + network.name + '</a><img src="logos/delete.png" onclick="removeNetwork(\'' + network.id + '\')"/><img src="logos/download.png" onclick="exportNetwork(\'' + network.id + '\')"/>\
+                <a onclick="showNetwork(\'' + network.id + '\')"  class="underlined">' + network.name + '</a>\
+                <img title="Delete this network." src="logos/delete.png" onclick="removeNetwork(\'' + network.id + '\')"/>\
+                <img title="Download this network in JSON format." src="logos/download.png" onclick="exportNetwork(\'' + network.id + '\')"/>\
             </li>');
     });
 }
@@ -61,9 +70,8 @@ function createNetwork() {
     currentNetwork = new vistorian.Network(id);
     currentNetwork.name = 'New Network ' + currentNetwork.id;
     storage.saveNetwork(currentNetwork);
-    showNetwork(currentNetwork.id);
-    saveCurrentNetwork(true);
-    loadNetworkList();
+    $('#chooseNetworktype').css('display', 'block');
+    $('#networkTables').css('display', 'none');
 }
 function setNodeTable(list) {
     var tableName = list.value;
@@ -104,6 +112,7 @@ function setLocationTable(list) {
     }
 }
 function saveCurrentNetwork(failSilently) {
+    console.log('Save current network');
     var networkcubeDataSet;
     saveCellChanges();
     if (currentNetwork.networkCubeDataSet == undefined) {
@@ -363,6 +372,7 @@ function saveCurrentNetwork(failSilently) {
     currentNetwork.networkCubeDataSet.nodeSchema = networkcubeNodeSchema;
     storage.saveNetwork(currentNetwork);
     networkcube.setDataManagerOptions({ keepOnlyOneSession: true });
+    console.log('>> START IMPORT');
     networkcube.importData(SESSION_NAME, currentNetwork.networkCubeDataSet);
     console.log('>> IMPORTED: ', currentNetwork.networkCubeDataSet);
     loadNetworkList();
@@ -383,9 +393,17 @@ function showNetwork(networkId) {
     $('#networkTables').css('display', 'inline');
     $('#networknameInput').val(currentNetwork.name);
     var tables = storage.getUserTables();
-    $('#nodetableSelect').append('<option>---</option>');
-    $('#linktableSelect').append('<option>---</option>');
-    $('#locationtableSelect').append('<option>---</option>');
+    $('#nodetableSelect').append('<option class="tableSelection">---</option>');
+    $('#linktableSelect').append('<option class="tableSelection">---</option>');
+    $('#locationtableSelect').append('<option class="tableSelection">---</option>');
+    $('#nodeTableContainer').css('display', 'inline');
+    $('#linkTableContainer').css('display', 'inline');
+    if (currentNetwork.networkConfig.indexOf('node') > -1) {
+        $('#linkTableContainer').css('display', 'none');
+    }
+    if (currentNetwork.networkConfig.indexOf('link') > -1) {
+        $('#nodeTableContainer').css('display', 'none');
+    }
     tables.forEach(function (t) {
         $('#nodetableSelect')
             .append('<option value="' + t.name + '">' + t.name + '</option>');
@@ -408,7 +426,6 @@ function showNetwork(networkId) {
     }
     $('#tileViewLink').attr('href', 'sites/tileview.html?session=' + SESSION_NAME + '&datasetName=' + currentNetwork.name.split(' ').join('___'));
     $('#mat-nlViewLink').attr('href', 'sites/mat-nl.html?session=' + SESSION_NAME + '&datasetName=' + currentNetwork.name.split(' ').join('___'));
-    saveCurrentNetwork(false);
 }
 function unshowNetwork() {
     $('#noNetworkTables').css('display', 'block');
@@ -444,8 +461,8 @@ function showTable(table, elementName, isLocationTable, schema) {
     $('#' + tableId).remove();
     var tableDiv = $('<div id="div_' + tableId + '"></div>');
     $(elementName).append(tableDiv);
-    var tableMenu = $('<div class="tableMenu"></div>');
-    tableDiv.append(tableMenu);
+    var tableMenu = $(elementName).prev();
+    tableMenu.find('.tableMenuButton').remove();
     var data = table.data;
     if (data.length > DATA_TABLE_MAX_LENGTH) {
         var info = $('<p>Table shows first 200 rows out of ' + data.length + ' rows in total.</p>');
@@ -453,16 +470,11 @@ function showTable(table, elementName, isLocationTable, schema) {
     }
     var csvExportButton = $('<button class="tableMenuButton" onclick="exportCurrentTableCSV(\'' + table.name + '\')">Export as CSV</button>');
     tableMenu.append(csvExportButton);
+    tableMenu.append($('<button class="tableMenuButton" onclick="extractLocations()">Extract locations</button>'));
     var extractLocationCoordinatesButton;
     if (isLocationTable) {
-        extractLocationCoordinatesButton = $('<button class="tableMenuButton" onclick="updateLocations()">Update location coordinates</button>');
+        tableMenu.append($('<button class="tableMenuButton" onclick="updateLocations()">Update location coordinates</button>'));
     }
-    else {
-        extractLocationCoordinatesButton = $('<button class="tableMenuButton" onclick="extractLocations()">Extract locations</button>');
-    }
-    tableMenu.append(extractLocationCoordinatesButton);
-    tableMenu.append('<div id="datatable_' + table.name + '_tool" ></div>');
-    tableMenu.append('<div id="datatable_' + table.name + '_error" ></div>');
     var tab = $('<table id="' + tableId + '">');
     tableDiv.append(tab);
     tab.addClass('datatable stripe hover cell-border and order-column compact');
@@ -583,14 +595,17 @@ function deleteCurrentTable() {
     loadTableList();
 }
 function schemaSelectionChanged(field, columnNumber, schemaName, parent) {
+    console.log('schemaSelectionChanged', field, columnNumber, schemaName);
     for (var field2 in currentNetwork[schemaName]) {
         if (field2 == 'relation' && currentNetwork[schemaName][field2].indexOf(columnNumber) > -1) {
             var arr = currentNetwork[schemaName][field];
             currentNetwork[schemaName][field2].slice(arr.indexOf(columnNumber), 0);
         }
-        else if (currentNetwork[schemaName][field2] == columnNumber) {
-            console.log('set ', field2, 'to -1');
-            currentNetwork[schemaName][field2] = -1;
+        else {
+            if (currentNetwork[schemaName][field2] == columnNumber) {
+                console.log('set ', field2, 'to -1');
+                currentNetwork[schemaName][field2] = -1;
+            }
         }
     }
     if (field == 'relation') {
@@ -771,8 +786,7 @@ function showMessage(message, timeout) {
     if ($('.messageBox'))
         $('.messageBox').remove();
     msgBox = $('<div class="messageBox"></div>');
-    msgBox.append('<p>' + message + '<p>');
-    msgBox.css('left', (window.innerWidth - 600) / 2);
+    msgBox.append('<div><p>' + message + '</p></div>');
     $('body').append(msgBox);
     msgBox.click(function () {
         $('.messageBox').remove();
@@ -807,4 +821,11 @@ function removeNetwork(networkId) {
 }
 function exportNetwork(networkId) {
     vistorian.exportNetwork(storage.getNetwork(networkId));
+}
+function setNetworkConfig(string) {
+    currentNetwork.networkConfig = string;
+    $('#chooseNetworktype').css('display', 'none');
+    storage.saveNetwork(currentNetwork);
+    loadNetworkList();
+    showNetwork(currentNetwork.id);
 }

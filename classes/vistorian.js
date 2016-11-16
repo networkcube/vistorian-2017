@@ -84,6 +84,7 @@ var vistorian;
     vistorian.VLocationSchema = VLocationSchema;
     var Network = (function () {
         function Network(id) {
+            this.networkConfig = 'both';
             this.id = id;
             this.userNodeSchema = new VNodeSchema();
             this.userLinkSchema = new VLinkSchema();
@@ -267,8 +268,9 @@ var vistorian;
         xhr['uniqueId'] = requestsRunning++;
     }
     function cleanTable(table) {
+        var emptyColBool = [];
         for (var i = 0; i < table.length; i++) {
-            for (var j = 0; j < table.length; j++) {
+            for (var j = 0; j < table[i].length; j++) {
                 if (table[i][j] != undefined)
                     table[i][j] = table[i][j].trim();
             }
