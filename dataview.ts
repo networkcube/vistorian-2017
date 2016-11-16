@@ -676,6 +676,10 @@ function showNetwork(networkId: number) {
     {
         $('#nodeTableContainer').css('display', 'none')
     }
+    if(currentNetwork.networkConfig == undefined){
+        $('#linkTableContainer').css('display', 'none')
+        $('#nodeTableContainer').css('display', 'none')
+    }
 
 
     tables.forEach(t => {
