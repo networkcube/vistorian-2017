@@ -370,6 +370,7 @@ function saveCurrentNetwork(failSilently: boolean) {
             networkcubeNodeSchema.location = 3;
         }
 
+
         for (var i = 0; i < nodeIds.length; i++) {
             // duplicate node entry if there is temporal information (currently e.g.: location)
             // console.log('nodeTimes[i]', nodeLocations[i].length)
@@ -559,6 +560,8 @@ function saveCurrentNetwork(failSilently: boolean) {
     currentNetwork.networkCubeDataSet.linkTable = normalizedLinkTable;
     currentNetwork.networkCubeDataSet.linkSchema = networkcubeLinkSchema;
     currentNetwork.networkCubeDataSet.nodeSchema = networkcubeNodeSchema;
+
+    console.log('locationTable', currentNetwork.networkCubeDataSet.locationTable)
 
     // console.log('[vistorian] network created', networkcubeDataSet);
 
@@ -796,12 +799,13 @@ function showTable(table: vistorian.VTable, elementName: string, isLocationTable
     // export button
     var csvExportButton = $('<button class="tableMenuButton" onclick="exportCurrentTableCSV(\'' + table.name + '\')">Export as CSV</button>')
     tableMenu.append(csvExportButton);
-    tableMenu.append($('<button class="tableMenuButton" onclick="extractLocations()">Extract locations</button>'))
 
     // location extraction button
     var extractLocationCoordinatesButton
     if (isLocationTable) {
         tableMenu.append($('<button class="tableMenuButton" onclick="updateLocations()">Update location coordinates</button>'))
+    }else{
+        tableMenu.append($('<button class="tableMenuButton" onclick="extractLocations()">Extract locations</button>'))
     }
 
     
@@ -1176,8 +1180,10 @@ function removeRow(row: number) {
 
 
 var filesToUpload = [];
+
 function getFileInfos(e) {
     filesToUpload = [];
+    
     var files: File[] = e.target.files; // FileList object
     console.log('upload', files.length, 'files')
 
@@ -1185,16 +1191,19 @@ function getFileInfos(e) {
     var output = [];
     for (var i = 0, f; f = files[i]; i++) {
         if (f.name.split('.')[1] != 'csv') {
-            output.push('<li style="color:#f00;"><strong>', f.name, '</strong> is not a CSV file.</li>');
+            // output.push('<li style="color:#f00;"><strong>', f.name, '</strong> is not a CSV file.</li>');
+            showMessage("Uploaded file is not a .csv file. Please chose another file.", 4000)
+            return;
         } else {
-            output.push('<li><strong>',
-                f.name, '</strong> (', f.type || 'n/a', ') - ',
-                f.size, ' bytes, last modified: ',
-                f.lastModifiedDate ? f.lastModifiedDate.toLocaleDateString() : 'n/a',
-                '</li>');
+            // output.push('<li><strong>',
+            //     f.name, '</strong> (', f.type || 'n/a', ') - ',
+            //     f.size, ' bytes, last modified: ',
+            //     f.lastModifiedDate ? f.lastModifiedDate.toLocaleDateString() : 'n/a',
+            //     '</li>');
             filesToUpload.push(f);
         }
     }
+
     uploadFiles()
 }
 
@@ -1308,7 +1317,7 @@ function extractLocations() {
         var schemaStrings: string[] = [];
         locationTable.data.push(['Id', 'User Label', 'Geoname', 'Longitude', 'Latitude']);
     }
-    var locationsFound: boolean = false;
+    var locationsFound: number = 0;
 
     // check node table for locations
     if (networkcube.isValidIndex(currentNetwork.userNodeSchema.location)) {
@@ -1324,7 +1333,6 @@ function extractLocations() {
         var linkTable = currentNetwork.userLinkTable.data;
         if (linkTable != undefined) {
             // check if location table exists
-            locationsFound = true;
             for (var i = 1; i < linkTable.length; i++) {
                 createLocationEntry(linkTable[i][currentNetwork.userLinkSchema.location_target], locationTable.data)
             }
@@ -1333,18 +1341,20 @@ function extractLocations() {
     if (networkcube.isValidIndex(currentNetwork.userLinkSchema.location_target)) {
         // check if location table exists
         if (linkTable != undefined) {
-            locationsFound = true;
+            // locationsFound = true;
             for (var i = 1; i < linkTable.length; i++) {
                 createLocationEntry(linkTable[i][currentNetwork.userLinkSchema.location_target], locationTable.data)
             }
         }
     }
+    
+    locationsFound = locationTable.data.length;
 
     saveCurrentNetwork(false);
     showNetwork(currentNetwork.id);
 
-    if (locationsFound)
-        showMessage('Locations updated', 2000);
+    if (locationsFound > 0)
+        showMessage(locationsFound + ' locations extracted successfully.', 2000);
     else
         showMessage('In order to extract locations, you must specify which columns are locations in your node and link tables.', 2000);
 }
@@ -1368,14 +1378,14 @@ function createLocationEntry(name: string, rows: any[]) {
 
 /** Updates long/lat for geonames field in the location table**/
 function updateLocations() {
-    showMessage('Updating locations...', false);
+    showMessage('Retrieving and updating location coordinates...', false);
 
     vistorian.updateLocationTable(currentNetwork.userLocationTable, currentNetwork.networkCubeDataSet.locationSchema,
         function(nothingImportant) {
             console.log('currentNetwork.userLocationTable', currentNetwork.userLocationTable.data)
             saveCurrentNetwork(false);
             showNetwork(currentNetwork.id);
-            showMessage('Locations updated', 2000);
+            showMessage('Locations updated successfully!', 2000);
         });
 }
 
