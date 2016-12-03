@@ -120,7 +120,9 @@ function saveCurrentNetwork(failSilently) {
             name: currentNetwork.name,
             nodeTable: [],
             linkTable: [],
-            locationTable: []
+            locationTable: [],
+            nodeSchema: networkcube.getDefaultNodeSchema(),
+            linkSchema: networkcube.getDefaultLinkSchema()
         });
         currentNetwork.networkCubeDataSet = networkcubeDataSet;
     }
@@ -249,6 +251,7 @@ function saveCurrentNetwork(failSilently) {
         normalizedLinkTable.shift();
         var time;
         normalizedNodeTable = [];
+        networkcubeNodeSchema.label = 1;
         var locationsFound = false;
         var timeFound = false;
         if (nodeLocations.length > 0) {
@@ -301,6 +304,7 @@ function saveCurrentNetwork(failSilently) {
             newRow.push(nodeData[i][nodeSchema.label]);
             normalizedNodeTable[id] = newRow;
         }
+        networkcubeNodeSchema.label = 1;
         console.log('Create new links: ' + (nodeData.length * nodeSchema.relation.length), nodeData, nodeSchema.relation);
         for (var i = 1; i < nodeData.length; i++) {
             for (var j = 0; j < nodeSchema.relation.length; j++) {
@@ -402,6 +406,10 @@ function showNetwork(networkId) {
         $('#linkTableContainer').css('display', 'none');
     }
     if (currentNetwork.networkConfig.indexOf('link') > -1) {
+        $('#nodeTableContainer').css('display', 'none');
+    }
+    if (currentNetwork.networkConfig == undefined) {
+        $('#linkTableContainer').css('display', 'none');
         $('#nodeTableContainer').css('display', 'none');
     }
     tables.forEach(function (t) {
@@ -526,6 +534,7 @@ function showTable(table, elementName, isLocationTable, schema) {
     });
     dtable.columns.adjust().draw();
     if (schema) {
+        console.log('Schema', schema);
         var schemaRow = $('<tr class="schemaRow"></tr>');
         $('#' + tableId + ' > thead').append(schemaRow);
         var select, cell, option, timeFormatInput;
@@ -556,6 +565,12 @@ function showTable(table, elementName, isLocationTable, schema) {
                         break;
                     case 'linkType':
                         fieldName = 'Link Type';
+                        break;
+                    case 'location':
+                        fieldName = 'Node Location';
+                        break;
+                    case 'label':
+                        fieldName = 'Node';
                         break;
                     default:
                         fieldName = field;
@@ -614,6 +629,7 @@ function schemaSelectionChanged(field, columnNumber, schemaName, parent) {
     else if (field != '---') {
         currentNetwork[schemaName][field] = columnNumber;
     }
+    console.log("currentNetwork[schemaName]", currentNetwork[schemaName]);
     saveCurrentNetwork(false);
     showNetwork(currentNetwork.id);
 }

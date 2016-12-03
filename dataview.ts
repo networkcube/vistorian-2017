@@ -177,7 +177,9 @@ function saveCurrentNetwork(failSilently: boolean) {
             name: currentNetwork.name,
             nodeTable: [],
             linkTable: [],
-            locationTable: []
+            locationTable: [],
+            nodeSchema: networkcube.getDefaultNodeSchema(),
+            linkSchema: networkcube.getDefaultLinkSchema()
         });
         currentNetwork.networkCubeDataSet = networkcubeDataSet;
     } else {
@@ -279,7 +281,6 @@ function saveCurrentNetwork(failSilently: boolean) {
             }
         }
 
-
         // create new link table and replace source label by source id
         normalizedLinkTable = [];
         var linkTime: string;
@@ -358,6 +359,8 @@ function saveCurrentNetwork(failSilently: boolean) {
         // create normalizedNodeTable
         var time: string;
         normalizedNodeTable = [];
+        networkcubeNodeSchema.label = 1;
+
         var locationsFound: boolean = false;
         var timeFound: boolean = false;
         if (nodeLocations.length > 0) {
@@ -454,6 +457,8 @@ function saveCurrentNetwork(failSilently: boolean) {
             newRow.push(nodeData[i][nodeSchema.label]);
             normalizedNodeTable[id] = newRow;
         }
+        networkcubeNodeSchema.label = 1;
+
 
 
         console.log('Create new links: ' + (nodeData.length * nodeSchema.relation.length), nodeData, nodeSchema.relation)
@@ -882,6 +887,8 @@ function showTable(table: vistorian.VTable, elementName: string, isLocationTable
     // Add schema selection to table, if a schema is passed
     if (schema) {
 
+        console.log('Schema', schema);
+
         // add schema header
         var schemaRow = $('<tr class="schemaRow"></tr>');
         $('#' + tableId + ' > thead').append(schemaRow);
@@ -908,6 +915,8 @@ function showTable(table: vistorian.VTable, elementName: string, isLocationTable
                     case 'location_source': fieldName = 'Source Node Location'; break;
                     case 'location_target': fieldName = 'Target Node Location'; break;
                     case 'linkType': fieldName = 'Link Type'; break;
+                    case 'location': fieldName = 'Node Location'; break;
+                    case 'label': fieldName = 'Node'; break;
                     default : 
                         fieldName = field;
                         fieldName = fieldName.charAt(0).toUpperCase() + fieldName.slice(1);    
@@ -1121,9 +1130,11 @@ function schemaSelectionChanged(field: string, columnNumber: number, schemaName:
 
     if (field == 'relation') {
         currentNetwork[schemaName][field].push(columnNumber);
+        
     } else if (field != '---') {
         currentNetwork[schemaName][field] = columnNumber;
     }
+    console.log("currentNetwork[schemaName]", currentNetwork[schemaName])
 
     saveCurrentNetwork(false);
     showNetwork(currentNetwork.id)
