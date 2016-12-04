@@ -177,9 +177,7 @@ function saveCurrentNetwork(failSilently: boolean) {
             name: currentNetwork.name,
             nodeTable: [],
             linkTable: [],
-            locationTable: [],
-            nodeSchema: networkcube.getDefaultNodeSchema(),
-            linkSchema: networkcube.getDefaultLinkSchema()
+            locationTable: []
         });
         currentNetwork.networkCubeDataSet = networkcubeDataSet;
     } else {
@@ -396,34 +394,34 @@ function saveCurrentNetwork(failSilently: boolean) {
         }
     }
 
-    // if (currentNetwork.userNodeTable) 
-    // {
-    //     networkcubeNodeSchema = new networkcube.NodeSchema(0);
-    //     networkcubeNodeSchema.id = currentNetwork.userNodeSchema.id;
-    //     networkcubeNodeSchema.label = currentNetwork.userNodeSchema.label;
-    //     if (networkcube.isValidIndex(currentNetwork.userNodeSchema.time)) {
-    //         networkcubeNodeSchema.time = currentNetwork.userNodeSchema.time;
-    //     }
-    //     if (networkcube.isValidIndex(currentNetwork.userNodeSchema.location)) {
-    //         networkcubeNodeSchema.location = currentNetwork.userNodeSchema.location;
-    //     }
-    //     if (networkcube.isValidIndex(currentNetwork.userNodeSchema.nodeType)) {
-    //         networkcubeNodeSchema.nodeType = currentNetwork.userNodeSchema.nodeType;
-    //     }
-    // } 
-    // else 
-    // {
-    //     networkcubeNodeSchema = new networkcube.NodeSchema(0);
-    //     networkcubeNodeSchema.id = 0;
-    //     networkcubeNodeSchema.label = 1;
-    //     if (networkcube.isValidIndex(currentNetwork.userLinkSchema.time)) {
-    //         networkcubeNodeSchema.time = 2;
-    //     }
-    //     if (networkcube.isValidIndex(currentNetwork.userLinkSchema.location_source) || networkcube.isValidIndex(currentNetwork.userLinkSchema.location_target)) {
-    //         networkcubeNodeSchema.location = 3;
-    //     }
+    if (currentNetwork.userNodeTable) 
+    {
+        networkcubeNodeSchema = new networkcube.NodeSchema(0);
+        networkcubeNodeSchema.id = currentNetwork.userNodeSchema.id;
+        networkcubeNodeSchema.label = currentNetwork.userNodeSchema.label;
+        if (networkcube.isValidIndex(currentNetwork.userNodeSchema.time)) {
+            networkcubeNodeSchema.time = currentNetwork.userNodeSchema.time;
+        }
+        if (networkcube.isValidIndex(currentNetwork.userNodeSchema.location)) {
+            networkcubeNodeSchema.location = currentNetwork.userNodeSchema.location;
+        }
+        if (networkcube.isValidIndex(currentNetwork.userNodeSchema.nodeType)) {
+            networkcubeNodeSchema.nodeType = currentNetwork.userNodeSchema.nodeType;
+        }
+    } 
+    else 
+    {
+        networkcubeNodeSchema = new networkcube.NodeSchema(0);
+        networkcubeNodeSchema.id = 0;
+        networkcubeNodeSchema.label = 1;
+        if (networkcube.isValidIndex(currentNetwork.userLinkSchema.time)) {
+            networkcubeNodeSchema.time = 2;
+        }
+        if (networkcube.isValidIndex(currentNetwork.userLinkSchema.location_source) || networkcube.isValidIndex(currentNetwork.userLinkSchema.location_target)) {
+            networkcubeNodeSchema.location = 3;
+        }
 
-    // }
+    }
 
     // CHECK FOR SINGLE NODE-TABLE
 
