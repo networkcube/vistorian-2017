@@ -854,17 +854,10 @@ function saveCellChanges() {
 }
 function clearCache() {
     unshowNetwork();
-    var ids = storage.getNetworkIds();
-    ids.forEach(function (id) {
-        storage.deleteNetworkById(id);
-    });
-    var tables = storage.getUserTables();
-    tables.forEach(function (t) {
-        storage.deleteTable(t);
-    });
+    localStorage.clear();
     $('#tableList').empty();
     $('#networkList').empty();
-    showMessage('Cache cleared', 2000);
+    location.reload();
 }
 function removeNetwork(networkId) {
     currentNetwork = storage.getNetwork(networkId);

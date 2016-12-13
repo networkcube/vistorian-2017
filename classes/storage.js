@@ -68,7 +68,6 @@ var storage;
     }
     storage.saveTableNames = saveTableNames;
     function deleteTable(table) {
-        console.log('delete table', table);
         $.jStorage.deleteKey(SESSION_NAME + SEP + SESSION_TABLE + SEP + table.name);
         var tableNames = getTableNames();
         var found = false;

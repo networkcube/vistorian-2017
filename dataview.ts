@@ -1435,24 +1435,15 @@ function clearCache(){
     unshowNetwork();
     // networkcube.clearAllDataManagerSessionCaches();    
     
-    // localStorage.clear();
+    localStorage.clear();
     // vistorian.clearCache();
-    
-    // remove all networks
-    var ids:number[] = storage.getNetworkIds();
-    ids.forEach((id:number)=>{
-        storage.deleteNetworkById(id);
-    })
-
-    var tables = storage.getUserTables();
-    tables.forEach((t)=>{
-        storage.deleteTable(t);
-    })
 
     $('#tableList').empty()
     $('#networkList').empty()
     
-    showMessage('Cache cleared', 2000)
+    location.reload()
+    // showMessage('Cache cleared', 2000)
+
 }
 
 function removeNetwork(networkId:string){

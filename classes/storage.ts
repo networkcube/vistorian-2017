@@ -83,7 +83,6 @@ module storage{
         $.jStorage.set(SESSION_NAME + SEP + SESSION_TABLENAMES, tableNames);
     }
     export function deleteTable(table:vistorian.VTable){
-        console.log('delete table', table);
         $.jStorage.deleteKey(SESSION_NAME + SEP + SESSION_TABLE + SEP + table.name);
 
         var tableNames:string[] = getTableNames();
