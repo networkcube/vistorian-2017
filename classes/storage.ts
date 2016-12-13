@@ -145,8 +145,11 @@ module storage{
     }
 
     export function deleteNetwork(network:vistorian.Network){
-        $.jStorage.set(SESSION_NAME + SEP + SESSION_NETWORK + SEP + network.id, {});
-        $.jStorage.deleteKey(SESSION_NAME + SEP + SESSION_NETWORK + SEP + network.id);
+        deleteNetworkById(network.id);
+    }
+    export function deleteNetworkById(id:number){
+        $.jStorage.set(SESSION_NAME + SEP + SESSION_NETWORK + SEP + id, {});
+        $.jStorage.deleteKey(SESSION_NAME + SEP + SESSION_NETWORK + SEP + id);
 
         var networkIds = getNetworkIds();
         var found = false;
@@ -154,15 +157,15 @@ module storage{
             networkIds = [];
         }else{
             networkIds.forEach(networkId => {
-                if(networkId == network.id){
+                if(networkId == id){
                     found = true;
                 }
             })
         }
         if(found){
-            networkIds.splice(networkIds.indexOf(network.id),1);
+            networkIds.splice(networkIds.indexOf(id),1);
             saveNetworkIds(networkIds);
         }
-        console.log('[storage] Network removed', getNetworkIds().length, 'networks remaining.');
+        // console.log('[storage] Network removed', getNetworkIds().length, 'networks remaining.');
     }
 }

@@ -41,7 +41,10 @@ function loadTableList() {
         var shownName = t;
         if (t.length > 30)
             shownName = t.substring(0, 30) + '..';
-        $('#tableList').append('<li><a onclick="showSingleTable(\'' + t + '\')"  class="underlined">' + shownName + '.csv</a></li>');
+        $('#tableList').append('<li>\
+            <a onclick="showSingleTable(\'' + t + '\')"  class="underlined">' + shownName + '.csv</a>\
+            <img class="controlIcon" title="Delete this table." src="logos/delete.png" onclick="removeTable(\'' + t + '\')"/>\
+        </li>');
     });
 }
 function loadNetworkList() {
@@ -53,8 +56,8 @@ function loadNetworkList() {
         $('#networkList').append('\
             <li>\
                 <a onclick="showNetwork(\'' + network.id + '\')"  class="underlined">' + network.name + '</a>\
-                <img title="Delete this network." src="logos/delete.png" onclick="removeNetwork(\'' + network.id + '\')"/>\
-                <img title="Download this network in JSON format." src="logos/download.png" onclick="exportNetwork(\'' + network.id + '\')"/>\
+                <img class="controlIcon" title="Delete this network." src="logos/delete.png" onclick="removeNetwork(\'' + network.id + '\')"/>\
+                <img class="controlIcon" title="Download this network in JSON format." src="logos/download.png" onclick="exportNetwork(\'' + network.id + '\')"/>\
             </li>');
     });
 }
@@ -851,7 +854,14 @@ function saveCellChanges() {
 }
 function clearCache() {
     unshowNetwork();
-    localStorage.clear();
+    var ids = storage.getNetworkIds();
+    ids.forEach(function (id) {
+        storage.deleteNetworkById(id);
+    });
+    var tables = storage.getUserTables();
+    tables.forEach(function (t) {
+        storage.deleteTable(t);
+    });
     $('#tableList').empty();
     $('#networkList').empty();
     showMessage('Cache cleared', 2000);
@@ -859,6 +869,12 @@ function clearCache() {
 function removeNetwork(networkId) {
     currentNetwork = storage.getNetwork(networkId);
     deleteCurrentNetwork();
+}
+function removeTable(tableId) {
+    var table = storage.getUserTable(tableId);
+    storage.deleteTable(table);
+    unshowTable('#individualTables');
+    loadTableList();
 }
 function exportNetwork(networkId) {
     vistorian.exportNetwork(storage.getNetwork(networkId));
