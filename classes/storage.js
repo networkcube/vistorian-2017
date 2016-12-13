@@ -68,7 +68,6 @@ var storage;
     }
     storage.saveTableNames = saveTableNames;
     function deleteTable(table) {
-        console.log('delete table', table);
         $.jStorage.deleteKey(SESSION_NAME + SEP + SESSION_TABLE + SEP + table.name);
         var tableNames = getTableNames();
         var found = false;
@@ -127,8 +126,12 @@ var storage;
     }
     storage.getNetwork = getNetwork;
     function deleteNetwork(network) {
-        $.jStorage.set(SESSION_NAME + SEP + SESSION_NETWORK + SEP + network.id, {});
-        $.jStorage.deleteKey(SESSION_NAME + SEP + SESSION_NETWORK + SEP + network.id);
+        deleteNetworkById(network.id);
+    }
+    storage.deleteNetwork = deleteNetwork;
+    function deleteNetworkById(id) {
+        $.jStorage.set(SESSION_NAME + SEP + SESSION_NETWORK + SEP + id, {});
+        $.jStorage.deleteKey(SESSION_NAME + SEP + SESSION_NETWORK + SEP + id);
         var networkIds = getNetworkIds();
         var found = false;
         if (!networkIds) {
@@ -136,16 +139,15 @@ var storage;
         }
         else {
             networkIds.forEach(function (networkId) {
-                if (networkId == network.id) {
+                if (networkId == id) {
                     found = true;
                 }
             });
         }
         if (found) {
-            networkIds.splice(networkIds.indexOf(network.id), 1);
+            networkIds.splice(networkIds.indexOf(id), 1);
             saveNetworkIds(networkIds);
         }
-        console.log('[storage] Network removed', getNetworkIds().length, 'networks remaining.');
     }
-    storage.deleteNetwork = deleteNetwork;
+    storage.deleteNetworkById = deleteNetworkById;
 })(storage || (storage = {}));

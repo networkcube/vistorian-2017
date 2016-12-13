@@ -55,6 +55,12 @@ p.title{
     font-weight: 700;
 }
 
+img.controlIcon{
+    height: 10px;
+    margin-left: 10px;
+    cursor:pointer;
+}
+
 .visLink{
     margin-top: 5px;
 }
@@ -158,6 +164,9 @@ option.tableSelection{
 .tablePic:hover{
     outline: solid 3px #000;
 }
+
+
+
 
 
 

@@ -78,6 +78,7 @@ img#logo{
 	width: 250px;
 	margin: auto; 
 }
+
 img.menuicon{
 	height: 40px;
 	margin-right: 10px;
@@ -261,11 +262,6 @@ select.schemaSelection{
 }
 
 
-#networkList img{
-	height: 10px;
-	margin-left: 10px;
-	cursor:pointer;
-}
 
 
 /*/*TOOL TIPS*/
