@@ -6,9 +6,9 @@ var storage;
     var SESSION_NETWORKIDS = "vistorian.networkIds";
     var SESSION_SESSIONID = "vistorian.lastSessionId";
     var SEP = "#";
-    function saveSessionId() {
-        console.log('save session', SESSION_NAME);
-        $.jStorage.set(SESSION_SESSIONID, SESSION_NAME);
+    function saveSessionId(sessionid) {
+        console.log('save session', sessionid);
+        $.jStorage.set(SESSION_SESSIONID, sessionid);
     }
     storage.saveSessionId = saveSessionId;
     function getLastSessionId() {
@@ -17,9 +17,9 @@ var storage;
         return session;
     }
     storage.getLastSessionId = getLastSessionId;
-    function saveUserTable(table) {
-        console.log('[vistorian] Save user table', table.name);
-        var tableNames = getTableNames();
+    function saveUserTable(table, sessionid) {
+        console.log('[vistorian] Save user table', table.name, sessionid);
+        var tableNames = getTableNames(sessionid);
         var found = false;
         if (!tableNames) {
             tableNames = [];
@@ -32,44 +32,42 @@ var storage;
             });
         }
         if (!found) {
-            console.log('\tTable', table.name, 'not found. Table added.');
             tableNames.push(table.name);
-            saveTableNames(tableNames);
+            saveTableNames(tableNames, sessionid);
         }
         else {
-            console.log('\tTable', table.name, 'found. Replace table');
         }
-        $.jStorage.set(SESSION_NAME + SEP + SESSION_TABLE + SEP + table.name, table);
-        console.log('\tTable', table.name, 'added.', getTableNames().length + ' tables stored.');
+        $.jStorage.set(sessionid + SEP + SESSION_TABLE + SEP + table.name, table);
+        console.log('\tTable', table.name, 'added.', getTableNames(sessionid).length + ' tables stored.', getUserTable(table.name, sessionid));
     }
     storage.saveUserTable = saveUserTable;
-    function getUserTables() {
-        var tablenames = this.getTableNames();
+    function getUserTables(sessionid) {
+        var tablenames = this.getTableNames(sessionid);
         var tables = [];
         for (var i = 0; i < tablenames.length; i++) {
-            tables.push($.jStorage.get(SESSION_NAME + SEP + SESSION_TABLE + SEP + tablenames[i]));
+            tables.push($.jStorage.get(sessionid + SEP + SESSION_TABLE + SEP + tablenames[i]));
         }
         return tables;
     }
     storage.getUserTables = getUserTables;
-    function getUserTable(tablename) {
-        return $.jStorage.get(SESSION_NAME + SEP + SESSION_TABLE + SEP + tablename);
+    function getUserTable(tablename, sessionid) {
+        return $.jStorage.get(sessionid + SEP + SESSION_TABLE + SEP + tablename);
     }
     storage.getUserTable = getUserTable;
-    function getTableNames() {
-        var names = $.jStorage.get(SESSION_NAME + SEP + SESSION_TABLENAMES);
+    function getTableNames(sessionid) {
+        var names = $.jStorage.get(sessionid + SEP + SESSION_TABLENAMES);
         if (names == undefined)
             names = [];
         return names;
     }
     storage.getTableNames = getTableNames;
-    function saveTableNames(tableNames) {
-        $.jStorage.set(SESSION_NAME + SEP + SESSION_TABLENAMES, tableNames);
+    function saveTableNames(tableNames, sessionid) {
+        $.jStorage.set(sessionid + SEP + SESSION_TABLENAMES, tableNames);
     }
     storage.saveTableNames = saveTableNames;
-    function deleteTable(table) {
-        $.jStorage.deleteKey(SESSION_NAME + SEP + SESSION_TABLE + SEP + table.name);
-        var tableNames = getTableNames();
+    function deleteTable(table, sessionid) {
+        $.jStorage.deleteKey(sessionid + SEP + SESSION_TABLE + SEP + table.name);
+        var tableNames = getTableNames(sessionid);
         var found = false;
         if (!tableNames) {
             tableNames = [];
@@ -83,16 +81,13 @@ var storage;
         }
         if (found) {
             tableNames.splice(tableNames.indexOf(table.name), 1);
-            saveTableNames(tableNames);
+            saveTableNames(tableNames, sessionid);
         }
-        console.log('table deleted', getTableNames());
+        console.log('table deleted', getTableNames(sessionid));
     }
     storage.deleteTable = deleteTable;
-    function saveNetwork(network, sessionnamepar) {
-        var sessionname = sessionnamepar;
-        if (!sessionname)
-            sessionname = SESSION_NAME;
-        var networkIds = getNetworkIds();
+    function saveNetwork(network, sessionid) {
+        var networkIds = getNetworkIds(sessionid);
         var found = false;
         if (!networkIds) {
             networkIds = [];
@@ -106,36 +101,36 @@ var storage;
         }
         if (!found) {
             networkIds.push(network.id);
-            saveNetworkIds(networkIds);
+            saveNetworkIds(networkIds, sessionid);
+            console.log('Save imported networkId', network.id);
         }
-        console.log('save network', network);
-        $.jStorage.set(sessionname + SEP + SESSION_NETWORK + SEP + network.id, network);
-        console.log('GET network', getNetwork(network.id));
+        $.jStorage.set(sessionid + SEP + SESSION_NETWORK + SEP + network.id, network);
     }
     storage.saveNetwork = saveNetwork;
-    function getNetworkIds() {
-        var ids = $.jStorage.get(SESSION_NAME + SEP + SESSION_NETWORKIDS);
+    function getNetworkIds(sessionid) {
+        var ids = $.jStorage.get(sessionid + SEP + SESSION_NETWORKIDS);
         if (ids == undefined)
             ids = [];
+        console.log('getNetworkIds :', sessionid, ids);
         return ids;
     }
     storage.getNetworkIds = getNetworkIds;
-    function saveNetworkIds(networkIds) {
-        $.jStorage.set(SESSION_NAME + SEP + SESSION_NETWORKIDS, networkIds);
+    function saveNetworkIds(networkIds, sessionid) {
+        $.jStorage.set(sessionid + SEP + SESSION_NETWORKIDS, networkIds);
     }
     storage.saveNetworkIds = saveNetworkIds;
-    function getNetwork(networkId) {
-        return $.jStorage.get(SESSION_NAME + SEP + SESSION_NETWORK + SEP + networkId);
+    function getNetwork(networkId, sessionid) {
+        return $.jStorage.get(sessionid + SEP + SESSION_NETWORK + SEP + networkId);
     }
     storage.getNetwork = getNetwork;
-    function deleteNetwork(network) {
-        deleteNetworkById(network.id);
+    function deleteNetwork(network, sessionid) {
+        deleteNetworkById(network.id, sessionid);
     }
     storage.deleteNetwork = deleteNetwork;
-    function deleteNetworkById(id) {
-        $.jStorage.set(SESSION_NAME + SEP + SESSION_NETWORK + SEP + id, {});
-        $.jStorage.deleteKey(SESSION_NAME + SEP + SESSION_NETWORK + SEP + id);
-        var networkIds = getNetworkIds();
+    function deleteNetworkById(id, sessionid) {
+        $.jStorage.set(sessionid + SEP + SESSION_NETWORK + SEP + id, {});
+        $.jStorage.deleteKey(sessionid + SEP + SESSION_NETWORK + SEP + id);
+        var networkIds = getNetworkIds(sessionid);
         var found = false;
         if (!networkIds) {
             networkIds = [];
@@ -149,7 +144,7 @@ var storage;
         }
         if (found) {
             networkIds.splice(networkIds.indexOf(id), 1);
-            saveNetworkIds(networkIds);
+            saveNetworkIds(networkIds, sessionid);
         }
     }
     storage.deleteNetworkById = deleteNetworkById;

@@ -128,7 +128,7 @@ module vistorian {
 
     // FUNCTIONS
 
-    export function loadCSV(files: File[], callBack: Function) {
+    export function loadCSV(files: File[], callBack: Function, sessionid:string) {
 
         var loadCount = 0;
         var table
@@ -157,7 +157,7 @@ module vistorian {
                 // remove white spaces, extra cols and rows etc..
                 formatTable(table);
 
-                storage.saveUserTable(table);
+                storage.saveUserTable(table, sessionid);
                 loadCount++;
 
                 console.log(loadCount, files.length);
@@ -529,6 +529,377 @@ module vistorian {
 
     export function importData(network:vistorian.Network, session){
         storage.saveNetwork(network, session);
+    }
+
+
+
+    export function importIntoNetworkcube(currentNetwork:vistorian.Network, sessionid:string, s:boolean)
+    {
+
+        // trim cell entries (remove overhead white space)
+        if (currentNetwork.userNodeTable)
+            vistorian.cleanTable(currentNetwork.userNodeTable.data);
+        if (currentNetwork.userLinkTable)
+            vistorian.cleanTable(currentNetwork.userLinkTable.data);
+
+
+        // get references to normalized tables
+        // var normalizedNodeTable: any[] = currentNetwork.networkCubeDataSet.nodeTable;
+        // var normalizedLinkTable: any[] = currentNetwork.networkCubeDataSet.linkTable;
+        // var normalizedLocationTable: any[] = currentNetwork.networkCubeDataSet.locationTable;
+        var normalizedNodeTable: any[] = [];
+        var normalizedLinkTable: any[] = [];
+        var normalizedLocationTable: any[] = [];
+
+        var networkcubeNodeSchema: networkcube.NodeSchema = currentNetwork.networkCubeDataSet.nodeSchema;
+        var networkcubeLinkSchema: networkcube.LinkSchema = currentNetwork.networkCubeDataSet.linkSchema;
+        var networkcubeLocationSchema: networkcube.LocationSchema = currentNetwork.networkCubeDataSet.locationSchema;
+
+        // if(normalizedLocationTable)       
+        // displayLocationTable();
+
+        var locationLabels: string[] = [];
+        if (currentNetwork.userLocationTable != undefined) {
+            for (var i = 1; i < currentNetwork.userLocationTable.data.length; i++) {
+                locationLabels.push(currentNetwork.userLocationTable.data[i][currentNetwork.userLocationSchema.label]);
+            }
+        }
+        console.log('locationLabels', locationLabels);
+
+
+        // CONVERT SINGLE-LINK TABLE 
+
+        var nodeIds: number[] = [];
+        var names: string[] = [];
+        var nodeLocations: number[][] = [];
+        var nodeTimes: number[][] = [];
+        
+        if (currentNetwork.userNodeTable == undefined) 
+        {
+            console.log('no node table found, create node table')
+            var linkData = currentNetwork.userLinkTable.data;
+            var id_source: number;
+            var id_target: number;
+            var name: string;
+            var loc: string;
+            var linkSchema: vistorian.VLinkSchema = currentNetwork.userLinkSchema;
+            var timeString: string;
+            var timeFormatted: string;
+
+            // Create node table
+            for (var i = 1; i < linkData.length; i++) {
+
+                // source
+                name = linkData[i][linkSchema.source];
+                if (names.indexOf(name) < 0) {
+                    id_source = nodeIds.length
+                    names.push(name);
+                    nodeIds.push(id_source);
+                    nodeLocations.push([]);
+                    nodeTimes.push([]);
+                }
+
+                // target
+                name = linkData[i][linkSchema.target];
+                if (names.indexOf(name) < 0) {
+                    id_target = nodeIds.length;
+                    names.push(name);
+                    nodeIds.push(id_target);
+                    nodeLocations.push([]);
+                    nodeTimes.push([]);
+                }
+            }
+
+            // create new link table and replace source label by source id
+            normalizedLinkTable = [];
+            var linkTime: string;
+            var found: boolean = true;
+            for (var i = 0; i < linkData.length; i++) {
+                normalizedLinkTable.push([])
+                for (var j = 0; j < linkData[i].length; j++) {
+                    normalizedLinkTable[i].push(linkData[i][j])
+                }
+
+                // replace node names by node IDs, i.e. references to node table.
+                if (networkcube.isValidIndex(linkSchema.source)) {
+                    normalizedLinkTable[i][linkSchema.source] = nodeIds[names.indexOf(linkData[i][linkSchema.source])]
+                }
+                if (networkcube.isValidIndex(linkSchema.target)) {
+                    normalizedLinkTable[i][linkSchema.target] = nodeIds[names.indexOf(linkData[i][linkSchema.target])]
+                }
+
+                id_source = names.indexOf(linkData[i][linkSchema.source]);
+                id_target = names.indexOf(linkData[i][linkSchema.target]);
+
+                if (id_source == -1 || id_target == -1)
+                    continue;
+
+                // if source and target locations are available, set to indices.
+                //source location
+                if (linkSchema.location_source > -1) {
+                    loc = linkData[i][linkSchema.location_source].trim();
+                    id = locationLabels.indexOf(loc);
+                    if (id == -1)
+                        continue;
+
+                    // console.log('source_location id: ', loc, id_source, id)                    
+                    // check if entry already exists for this node and this time, if not, add this location to the nodes locations.
+                    found = false;
+                    for (var t = 0; t < nodeTimes[id_source].length; t++) {
+                        if (nodeTimes[id_source][t] == linkData[i][linkSchema.time]) {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        nodeTimes[id_source].push(linkData[i][linkSchema.time])
+                        nodeLocations[id_source].push(id)
+                    }
+                    normalizedLinkTable[i][linkSchema.location_source] = id;
+                }
+                //target location
+                if (linkSchema.location_target > -1) {
+
+                    loc = linkData[i][linkSchema.location_target].trim();
+                    id = locationLabels.indexOf(loc);
+                    if (id == -1)
+                        continue;
+
+                    console.log('source_location id: ', loc, id_target, id)
+                    // check if entry already exists for this time, if yes, discard this one.           
+                    found = false;
+                    for (var t = 0; t < nodeTimes[id_target].length; t++) {
+                        if (nodeTimes[id_target][t] == linkData[i][linkSchema.time]) {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        nodeTimes[id_target].push(linkData[i][linkSchema.time])
+                        nodeLocations[id_target].push(id)
+                    }
+                    normalizedLinkTable[i][linkSchema.location_target] = id;
+                }
+
+            }
+            // remove header information from user table
+            normalizedLinkTable.shift();
+
+            // create normalizedNodeTable
+            var time: string;
+            normalizedNodeTable = [];
+            networkcubeNodeSchema.label = 1;
+
+            var locationsFound: boolean = false;
+            var timeFound: boolean = false;
+            if (nodeLocations.length > 0) {
+                networkcubeNodeSchema.location = 4;
+            }
+            if (nodeTimes.length > 0) {
+                networkcubeNodeSchema.location = 3;
+            }
+
+
+            for (var i = 0; i < nodeIds.length; i++) {
+                // duplicate node entry if there is temporal information (currently e.g.: location)
+                // console.log('nodeTimes[i]', nodeLocations[i].length)
+                if (nodeLocations[i].length > 0) {
+                    locationsFound = true;
+                    for (var j = 0; j < nodeLocations[i].length; j++) {
+                        time = undefined;
+                        if (nodeTimes[i][j]) {
+                            time = nodeTimes[i][j].toString();
+                        }
+                        normalizedNodeTable.push([nodeIds[i], names[i], nodeTimes[i][j], nodeLocations[i][j]]);
+                    }
+                } else {
+                    // no locations specified
+                    if (networkcube.isValidIndex(currentNetwork.userNodeSchema.time)) {
+                        // time specified in schema
+                        normalizedNodeTable.push([nodeIds[i], names[i], undefined, undefined]);
+                    } else {
+                        // no time specified in schema
+                        normalizedNodeTable.push([nodeIds[i], names[i], undefined]);
+                    }
+                }
+            }
+        }
+
+        if (currentNetwork.userNodeTable) 
+        {
+            networkcubeNodeSchema = new networkcube.NodeSchema(0);
+            networkcubeNodeSchema.id = currentNetwork.userNodeSchema.id;
+            networkcubeNodeSchema.label = currentNetwork.userNodeSchema.label;
+            if (networkcube.isValidIndex(currentNetwork.userNodeSchema.time)) {
+                networkcubeNodeSchema.time = currentNetwork.userNodeSchema.time;
+            }
+            if (networkcube.isValidIndex(currentNetwork.userNodeSchema.location)) {
+                networkcubeNodeSchema.location = currentNetwork.userNodeSchema.location;
+            }
+            if (networkcube.isValidIndex(currentNetwork.userNodeSchema.nodeType)) {
+                networkcubeNodeSchema.nodeType = currentNetwork.userNodeSchema.nodeType;
+            }
+        } 
+        else 
+        {
+            networkcubeNodeSchema = new networkcube.NodeSchema(0);
+            networkcubeNodeSchema.id = 0;
+            networkcubeNodeSchema.label = 1;
+            if (networkcube.isValidIndex(currentNetwork.userLinkSchema.time)) {
+                networkcubeNodeSchema.time = 2;
+            }
+            if (networkcube.isValidIndex(currentNetwork.userLinkSchema.location_source) || networkcube.isValidIndex(currentNetwork.userLinkSchema.location_target)) {
+                networkcubeNodeSchema.location = 3;
+            }
+
+        }
+
+        // CHECK FOR SINGLE NODE-TABLE
+
+        if (currentNetwork.userLinkTable == undefined) 
+        {
+            console.log('Create and fill link table')
+            // create link table and fill
+            var nodeData = currentNetwork.userNodeTable.data;
+            console.log('nodeData', nodeData)
+            var nodeSchema: vistorian.VNodeSchema = currentNetwork.userNodeSchema;
+            var id: number;
+            var relCol: number;
+            var newRow: any[];
+            var nodeId: number;
+            var newNodeId: number = nodeData.length + 1;
+
+            // networkcubeLinkSchema = new networkcube.LinkSchema(0, 1, 2)
+            networkcubeLinkSchema.linkType = 3;
+            if (networkcube.isValidIndex(nodeSchema.time))
+                networkcubeLinkSchema.time = 4;
+
+
+            // copy existing nodes into normalizedTable
+            for (var i = 1; i < nodeData.length; i++) {
+                newRow = [];
+                id = parseInt(nodeData[i][nodeSchema.id]);
+                while (normalizedNodeTable.length < (id + 1)) {
+                    // insert empty rows if index is too small
+                    normalizedNodeTable.push([]);
+                }
+                newRow.push(id);
+                newRow.push(nodeData[i][nodeSchema.label]);
+                normalizedNodeTable[id] = newRow;
+            }
+            networkcubeNodeSchema.label = 1;
+
+
+
+            console.log('Create new links: ' + (nodeData.length * nodeSchema.relation.length), nodeData, nodeSchema.relation)
+            for (var i = 1; i < nodeData.length; i++) {
+
+                // create relations in link table
+                for (var j = 0; j < nodeSchema.relation.length; j++) {
+                    relCol = nodeSchema.relation[j];
+
+                    // dont create relation if field entry is empty;
+                    if (nodeData[i][relCol].length == 0)
+                        continue;
+
+                    // check if node already exist
+                    nodeId = -1;
+                    for (var k = 0; k < normalizedNodeTable.length; k++) {
+                        // console.log('check node existance: ', normalizedNodeTable[k][1], nodeData[i][relCol])
+                        if (normalizedNodeTable[k][1] == nodeData[i][relCol]) {
+                            nodeId = k;
+                            break;
+                        }
+                    }
+                    if (nodeId < 0) {
+                        // create new node in node table
+                        nodeId = normalizedNodeTable.length;
+                        newRow = [];
+                        newRow.push(nodeId);
+                        newRow.push(nodeData[i][relCol]);
+                        newRow.push(undefined); // time
+                        newRow.push(undefined); // location
+                        normalizedNodeTable.push(newRow)
+                        // console.log('create node', nodeId,  nodeData[i][relCol]);
+                    }
+
+                    // create entry in link table
+                    newRow = []
+                    // edge id
+                    newRow.push(normalizedLinkTable.length);
+                    // source id
+                    newRow.push(parseInt(nodeData[i][nodeSchema.id]));
+                    // target id
+                    newRow.push(nodeId);
+                    // relation type
+                    newRow.push(nodeData[0][relCol]);
+                    // time
+                    if (nodeSchema.time > -1)
+                        newRow.push(nodeData[i][nodeSchema.time]);
+
+                    normalizedLinkTable.push(newRow);
+                    // console.log('create edge row', newRow);
+
+                }
+            }
+            console.log('normalizedLinkTable', normalizedLinkTable)
+        }
+
+
+
+        // set networkcube link schema
+        if (currentNetwork.userLinkTable) {
+            for (var field in currentNetwork.userLinkSchema) {
+                if (field == 'name') continue;
+                networkcubeLinkSchema[field] = currentNetwork.userLinkSchema[field];
+            }
+        }
+
+        // format times into ISO standart time
+        if (currentNetwork.hasOwnProperty('timeFormat') && currentNetwork.timeFormat != undefined && currentNetwork.timeFormat.length > 0) {
+            var format = currentNetwork.timeFormat;
+            if (networkcubeLinkSchema.time != undefined && networkcubeLinkSchema.time > -1) {
+                for (var i = 0; i < normalizedLinkTable.length; i++) {
+                    time = moment(normalizedLinkTable[i][networkcubeLinkSchema.time], format).format(networkcube.timeFormat())
+                    if (time.indexOf('Invalid') > -1)
+                        time = undefined;
+                    normalizedLinkTable[i][networkcubeLinkSchema.time] = time;
+                }
+            }
+
+            if (networkcubeNodeSchema.time != undefined && networkcubeNodeSchema.time > -1) {
+                for (var i = 0; i < normalizedNodeTable.length; i++) {
+                    time = moment(normalizedNodeTable[i][networkcubeNodeSchema.time], format).format(networkcube.timeFormat());
+                    if (time.indexOf('Invalid') > -1)
+                        time = undefined;
+                    normalizedNodeTable[i][networkcubeNodeSchema.time] = time
+                }
+            }
+        }
+
+        // sync location tables
+        if (currentNetwork.userLocationTable) {
+            currentNetwork.networkCubeDataSet.locationTable = currentNetwork.userLocationTable.data.slice(0);
+            currentNetwork.networkCubeDataSet.locationTable.shift();
+            currentNetwork.networkCubeDataSet.locationSchema = currentNetwork.userLocationSchema;
+        }
+
+        // to be save    
+        currentNetwork.networkCubeDataSet.nodeTable = normalizedNodeTable;
+        currentNetwork.networkCubeDataSet.linkTable = normalizedLinkTable;
+        currentNetwork.networkCubeDataSet.linkSchema = networkcubeLinkSchema;
+        currentNetwork.networkCubeDataSet.nodeSchema = networkcubeNodeSchema;
+
+        console.log('locationTable', currentNetwork.networkCubeDataSet.locationTable)
+
+        // console.log('[vistorian] network created', networkcubeDataSet);
+
+        storage.saveNetwork(currentNetwork, sessionid);
+
+        networkcube.setDataManagerOptions({ keepOnlyOneSession: true });
+        console.log('>> START IMPORT');
+        networkcube.importData(sessionid, currentNetwork.networkCubeDataSet);
+        console.log('>> IMPORTED: ', currentNetwork.networkCubeDataSet);
     }
 
 }
