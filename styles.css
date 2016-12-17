@@ -1,7 +1,8 @@
 body{
-	font-family: "Helvetica Neue", Helvetica, sans-serif;
+	font-family: 'Nunito Sans', "Helvetica Neue", Helvetica, sans-serif;
 	font-size: 11pt;
-	font-weight: 200;
+	font-weight: 100;
+	line-height: 1.6em;
 	background: #fff;
 }
 
@@ -18,6 +19,7 @@ div#layout{
 }
 
 div#footer{
+	margin-top: 100px;
 	height: 200px;
 	color: #777;
 	text-align: center;
@@ -27,6 +29,10 @@ div#logo{
 	margin-bottom: 50px;
 }
 
+div#logos{
+	margin-top: 70px;
+}
+
 div#logos img{
 	height: 35px;
 	margin-left: 20px;
@@ -34,6 +40,7 @@ div#logos img{
 }
 
 div#content{
+	padding-top: 50px;
 }
 
 div#description{
@@ -88,6 +95,7 @@ img.menuicon{
 
 ul#menu{
 	margin-bottom: 50px;
+	margin-top: 70px;
 }
 
 ul#menu li{
@@ -97,9 +105,8 @@ ul#menu li{
 }
 
 ul#menu a{
-	font-family: 'Lato', 'Helvetica Neue', sans-serif; 
-	font-size:12pt;
-	font-weight: 100;
+	font-family: 'Poiret One', 'Helvetica Neue', sans-serif; 
+	font-size:15pt;
 	text-decoration: none;
 }
 
@@ -109,11 +116,12 @@ ul#menu .menuicon{
 
 
 p.subtitle{
-	font-size: 17pt;
-	margin-bottom: 50px;
+	margin-bottom: 30px;
 	font-weight: 100; 
-	font-family: 'Helvetica Neue', sans-serif; 
+	font-family: 'Poiret One', 'Helvetica Neue', sans-serif; 
+	font-size: 17pt;
 	color:#111111;
+	line-height: 1.7em;
 	/*font-family: 'Lora';*/
 }
 
@@ -126,21 +134,20 @@ h1{
 	margin-top: 0px;
 	color: #d95f0e;
 	/*font-family: 'Amatic SC', Helvetica, sans-serif;*/
-	font-family: 'Lato', 'Helvetica Neue', sans-serif; 
+	font-family: 'Poiret One', 'Helvetica Neue', sans-serif; 
 	/*font-weight: 100;*/
 }
 
 h2{
-	font-size: 13pt;
-	margin-top: 30px;
+	font-size: 20pt;
+	margin-top: 50px;
 	/*font-family: 'Helvetica Neue';*/
-	font-family: 'Lato', 'Helvetica Neue', sans-serif; 
+	font-family: 'Poiret One', 'Helvetica Neue', sans-serif; 
 	color:#111111;
 	font-weight: bold;
+	/*text-decoration: underline;*/
 	/*font-weight: 500;*/
-	background: #eee;
-	padding:10px;
-	padding-left:10px;
+	background: #fff;
 	border-radius: 2px;
 }
 
@@ -182,8 +189,8 @@ ul{
 }
 
 img.visimage{
-	height: 230px;
-	border: solid 1px #dddddd;
+	height: 200px;
+	border: solid 1px #eee;
 	margin-right: 5px;
 	margin-left: 5px;
 }
@@ -261,6 +268,10 @@ select.schemaSelection{
 	width: 120px;
 }
 
+
+pre{
+	line-height: 1em;
+}
 
 
 
