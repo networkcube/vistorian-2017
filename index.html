@@ -184,7 +184,9 @@
         <script src="classes/storage.js"></script>
         <script src="classes/utils.js"></script>
         <script src="classes/vistorian.js"></script>
+
         <script type="text/javascript">
+
             var vis, biblio;
             var SESSION_NAME = Date.now();
             // $('#quickstartlink').attr('href', 'dataview.html?session=' + SESSION_NAME)
@@ -217,6 +219,14 @@
                 biblio+= "</ol>" ;
                 $('#biblio').append(biblio);
             });
+
+            // Load demo data
+
+            $.get("https://raw.githubusercontent.com/networkcube/vistorian/master/demo/Scientists.networkcube", function (data))
+            {
+                
+            }
+
         </script>
         
 
