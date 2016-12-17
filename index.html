@@ -10,24 +10,42 @@
     <link href="https://fonts.googleapis.com/css?family=Nunito+Sans" rel="stylesheet">
 </head>    
 <body>
-    <script src="loadFonts.js"></script>
+
+
+        <!-- <script src="lib/jquery.js"></script> -->
+        <script src="https://networkcube.github.io/networkcube/core/networkcube.js"></script>
+        <script src="lib/jstorage.js"></script>
+        <script src="classes/storage.js"></script>
+        <script src="classes/utils.js"></script>
+        <script src="classes/vistorian.js"></script>
+
+
            <div id="main">
-            <p id="sessId" style="display:none" />
+            <p id="sessId" style="display:none"/>
             <div id="intro">
                 <a href="index.html"><img id="logo" src="logos/logo2.png"/></a>
                 <p class="subtitle">Interactive Visualizations for Dynamic and Multivariate Networks. <br> Online and Open Source.</p>
 
-                <div id="vistiles">
-                    <a href="https://github.com/networkcube/networkcube/wiki/Visualization-Manual#node-link-visualization-nodelink" target="_blank"><img class="visimage" src="figures/nodelink.png"/></a>
-                    <a href="https://github.com/networkcube/networkcube/wiki/Visualization-Manual#dynamic-ego-network-visualization-dynamicego" target="_blank"><img class="visimage" src="figures/ego.png" /></a>
-                    <a href="https://github.com/networkcube/networkcube/wiki/Visualization-Manual#matrix-visualization-matrix" target="_blank"><img class="visimage" src="figures/matrix.png" /></a>
-                    <a href="https://github.com/networkcube/networkcube/wiki/Visualization-Manual#geomap-visualization-map" target="_blank"><img class="visimage" src="figures/map.png" /></a>
+                <div id="vistiles">                    
+                    <a href="sites/nodelink.html?session=VISTORIAN_DEMO&datasetName=Scientists" target="_blank">
+                        <img class="visimage" src="figures/nodelink.png"/>
+                    </a>
+                    <a href="sites/dynamicego.html?session=VISTORIAN_DEMO&datasetName=Scientists" target="_blank">
+                        <img class="visimage" src="figures/ego.png" />
+                    </a>
+                    <a href="sites/matrix.html?session=VISTORIAN_DEMO&datasetName=Scientists" target="_blank">
+                        <img class="visimage" src="figures/matrix.png" />
+                    </a>
+                    <a href="sites/map.html?session=VISTORIAN_DEMO&datasetName=Scientists" target="_blank">
+                        <img class="visimage" src="figures/map.png" />
+                    </a>
+
                 </div>
 
 
                 <ul id="menu">
                     <li>
-                        <a href=""><img src="logos/arrow.png" class="menuicon"/>Demo</a>
+                        <a href="dataview.html?session=VISTORIAN_DEMO"><img src="logos/arrow.png" class="menuicon"/>Demo</a>
                     </li>
                     <li>
                         <a id="resumeSessionLink2"><img src="logos/network.png" class="menuicon" />Your Session</a>
@@ -179,12 +197,7 @@
                 © 2016 Microsoft <img src="logos/logo-microsoft.png" height="20px"> © 2016 INRIA <img src="logos/logo-inria.png" height="20px">
     
 
-        <script src="lib/jquery.js"></script>
-        <script src="lib/jstorage.js"></script>
-        <script src="classes/storage.js"></script>
-        <script src="classes/utils.js"></script>
-        <script src="classes/vistorian.js"></script>
-
+ 
         <script type="text/javascript">
 
             var vis, biblio;
@@ -220,12 +233,13 @@
                 $('#biblio').append(biblio);
             });
 
-            // Load demo data
 
-            $.get("https://raw.githubusercontent.com/networkcube/vistorian/master/demo/Scientists.networkcube", function (data))
-            {
-                
-            }
+            // Load demo data
+            $.get("https://raw.githubusercontent.com/networkcube/vistorian/master/demo/Scientists-demo.vistorian",
+                function (data)
+                {   
+                    vistorian.importData(data, 'VISTORIAN_DEMO');            
+                });
 
         </script>
         

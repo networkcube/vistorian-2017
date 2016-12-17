@@ -88,7 +88,7 @@ function loadNetworkList() {
             <li>\
                 <a onclick="showNetwork(\'' + network.id + '\')"  class="underlined">' + network.name + '</a>\
                 <img class="controlIcon" title="Delete this network." src="logos/delete.png" onclick="removeNetwork(\''+ network.id +'\')"/>\
-                <img class="controlIcon" title="Download this network in JSON format." src="logos/download.png" onclick="exportNetwork(\''+ network.id +'\')"/>\
+                <img class="controlIcon" title="Download this network in .vistorian format." src="logos/download.png" onclick="exportNetwork(\''+ network.id +'\')"/>\
             </li>')
     })
 }
