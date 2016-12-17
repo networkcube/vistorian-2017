@@ -88,7 +88,10 @@ var storage;
         console.log('table deleted', getTableNames());
     }
     storage.deleteTable = deleteTable;
-    function saveNetwork(network) {
+    function saveNetwork(network, sessionnamepar) {
+        var sessionname = sessionnamepar;
+        if (!sessionname)
+            sessionname = SESSION_NAME;
         var networkIds = getNetworkIds();
         var found = false;
         if (!networkIds) {
@@ -106,7 +109,7 @@ var storage;
             saveNetworkIds(networkIds);
         }
         console.log('save network', network);
-        $.jStorage.set(SESSION_NAME + SEP + SESSION_NETWORK + SEP + network.id, network);
+        $.jStorage.set(sessionname + SEP + SESSION_NETWORK + SEP + network.id, network);
         console.log('GET network', getNetwork(network.id));
     }
     storage.saveNetwork = saveNetwork;

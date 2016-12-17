@@ -106,7 +106,11 @@ module storage{
 
     // NETWORKS
 
-    export function saveNetwork(network:vistorian.Network){
+    export function saveNetwork(network:vistorian.Network, sessionnamepar?:string){
+
+        var sessionname:string = sessionnamepar;
+        if(!sessionname)
+            sessionname = SESSION_NAME;
 
         // add name to table names if not yet there.
         var networkIds:number[] = getNetworkIds();
@@ -125,7 +129,7 @@ module storage{
             saveNetworkIds(networkIds);
         }
         console.log('save network', network)
-        $.jStorage.set(SESSION_NAME + SEP + SESSION_NETWORK + SEP + network.id, network);
+        $.jStorage.set(sessionname + SEP + SESSION_NETWORK + SEP + network.id, network);
         console.log('GET network', getNetwork(network.id))
 
     }

@@ -484,45 +484,51 @@ module vistorian {
 
     export function exportNetwork(network:vistorian.Network){
         
-        // CONVERT NODES
-        var nodeTable = network.networkCubeDataSet.nodeTable;
-        var nodeSchema = network.networkCubeDataSet.nodeSchema;
-        var nodes = [];
-        var n;
-        for(var i=0 ; i <nodeTable.length ; i++){
-            n = new Object();
-            for( var prop in nodeSchema){
-                if(!prop.startsWith('name') && nodeSchema[prop] != null)
-                    n[prop] = nodeTable[i][nodeSchema[prop]]                
-            }
-            nodes.push(n)
-        }
+        // // CONVERT NODES
+        // var nodeTable = network.networkCubeDataSet.nodeTable;
+        // var nodeSchema = network.networkCubeDataSet.nodeSchema;
+        // var nodes = [];
+        // var n;
+        // for(var i=0 ; i <nodeTable.length ; i++){
+        //     n = new Object();
+        //     for( var prop in nodeSchema){
+        //         if(!prop.startsWith('name') && nodeSchema[prop] != null)
+        //             n[prop] = nodeTable[i][nodeSchema[prop]]                
+        //     }
+        //     nodes.push(n)
+        // }
     
-        // CONVERT LINKS
-        var linkTable = network.networkCubeDataSet.linkTable;
-        var linkSchema = network.networkCubeDataSet.linkSchema;
-        var links = [];
-        var n;
-        for(var i=0 ; i <linkTable.length ; i++){
-            n = new Object();
-            for( var prop in linkSchema){
-                if(!prop.startsWith('name') && linkSchema[prop] != null)
-                    n[prop] = linkTable[i][linkSchema[prop]]                
-            }
-            links.push(n)
-        }
-        var blurb = {
-            nodes:nodes, 
-            links:links
-        }
+        // // CONVERT LINKS
+        // var linkTable = network.networkCubeDataSet.linkTable;
+        // var linkSchema = network.networkCubeDataSet.linkSchema;
+        // var links = [];
+        // var n;
+        // for(var i=0 ; i <linkTable.length ; i++){
+        //     n = new Object();
+        //     for( var prop in linkSchema){
+        //         if(!prop.startsWith('name') && linkSchema[prop] != null)
+        //             n[prop] = linkTable[i][linkSchema[prop]]                
+        //     }
+        //     links.push(n)
+        // }
+        // var blurb = {
+        //     nodes:nodes, 
+        //     links:links
+        // }
+
+        var blurb = network;
             
         var element = document.createElement('a');
         element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(JSON.stringify(blurb)));
-        element.setAttribute('download', network.name + '.networkcube');
+        element.setAttribute('download', network.name + '.vistorian');
         element.style.display = 'none';
         document.body.appendChild(element);
         element.click();
         document.body.removeChild(element);
+    }
+
+    export function importData(network:vistorian.Network, session){
+        storage.saveNetwork(network, session);
     }
 
 }
