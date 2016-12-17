@@ -1,8 +1,8 @@
 var DATA_TABLE_MAX_LENGTH = 200;
 document.getElementById('files').addEventListener('change', getFileInfos, false);
 var SESSION_NAME = utils.getUrlVars()['session'];
-storage.saveSessionId();
-var tables = storage.getUserTables();
+storage.saveSessionId(SESSION_NAME);
+var tables = storage.getUserTables(SESSION_NAME);
 var currentNetwork;
 var visualizations = [
     ['Node Link', 'nodelink'],
@@ -16,6 +16,9 @@ function init() {
     loadVisualizationList();
     loadNetworkList();
     loadTableList();
+    var networkids = storage.getNetworkIds(SESSION_NAME);
+    if (networkids.length > 0)
+        showNetwork(networkids[0]);
 }
 function loadVisualizationList() {
     visualizations.forEach(function (v) {
@@ -36,7 +39,8 @@ function loadVisualizationList() {
 }
 function loadTableList() {
     $('#tableList').empty();
-    var tableNames = storage.getTableNames();
+    var tableNames = storage.getTableNames(SESSION_NAME);
+    console.log('tableNames', tableNames, SESSION_NAME);
     tableNames.forEach(function (t) {
         var shownName = t;
         if (t.length > 30)
@@ -49,10 +53,10 @@ function loadTableList() {
 }
 function loadNetworkList() {
     $('#networkList').empty();
-    var networkNames = storage.getNetworkIds();
+    var networkNames = storage.getNetworkIds(SESSION_NAME);
     var network;
     networkNames.forEach(function (t) {
-        network = storage.getNetwork(t);
+        network = storage.getNetwork(t, SESSION_NAME);
         $('#networkList').append('\
             <li>\
                 <a onclick="showNetwork(\'' + network.id + '\')"  class="underlined">' + network.name + '</a>\
@@ -65,21 +69,18 @@ function loadVisualization(visType) {
     window.open('sites/' + visType + '.html?session=' + SESSION_NAME + '&datasetName=' + currentNetwork.name);
 }
 function createNetwork() {
-    var networkIds = storage.getNetworkIds();
-    var id = 1;
-    if (networkIds.length > 0) {
-        id = networkIds[networkIds.length - 1] + 1;
-    }
+    var networkIds = storage.getNetworkIds(SESSION_NAME);
+    var id = new Date().getTime();
     currentNetwork = new vistorian.Network(id);
     currentNetwork.name = 'New Network ' + currentNetwork.id;
-    storage.saveNetwork(currentNetwork);
+    storage.saveNetwork(currentNetwork, SESSION_NAME);
     $('#chooseNetworktype').css('display', 'block');
     $('#networkTables').css('display', 'none');
 }
 function setNodeTable(list) {
     var tableName = list.value;
     if (tableName != '---') {
-        var table = storage.getUserTable(tableName);
+        var table = storage.getUserTable(tableName, SESSION_NAME);
         currentNetwork.userNodeTable = table;
         console.log('currentNetwork.userNodeTable', currentNetwork.userNodeTable);
         showTable(table, '#nodeTableDiv', false, currentNetwork.userNodeSchema);
@@ -92,7 +93,7 @@ function setNodeTable(list) {
 function setLinkTable(list) {
     var tableName = list.value;
     if (tableName != '---') {
-        var table = storage.getUserTable(tableName);
+        var table = storage.getUserTable(tableName, SESSION_NAME);
         currentNetwork.userLinkTable = table;
         showTable(table, '#linkTableDiv', false, currentNetwork.userLinkSchema);
     }
@@ -104,7 +105,7 @@ function setLinkTable(list) {
 function setLocationTable(list) {
     var tableName = list.value;
     if (tableName != '---') {
-        var table = storage.getUserTable(tableName);
+        var table = storage.getUserTable(tableName, SESSION_NAME);
         currentNetwork.userLocationTable = table;
         currentNetwork.userLocationSchema = new networkcube.LocationSchema(0, 1, 2, 3, 4);
         showTable(table, '#locationTableDiv', true, currentNetwork.userLocationSchema);
@@ -144,272 +145,11 @@ function saveCurrentNetwork(failSilently) {
             showMessage("Cannot save without a Node table or a Link Table", 2000);
         return;
     }
-    if (currentNetwork.userNodeTable)
-        vistorian.cleanTable(currentNetwork.userNodeTable.data);
-    if (currentNetwork.userLinkTable)
-        vistorian.cleanTable(currentNetwork.userLinkTable.data);
-    var normalizedNodeTable = [];
-    var normalizedLinkTable = [];
-    var normalizedLocationTable = [];
-    var networkcubeNodeSchema = currentNetwork.networkCubeDataSet.nodeSchema;
-    var networkcubeLinkSchema = currentNetwork.networkCubeDataSet.linkSchema;
-    var networkcubeLocationSchema = currentNetwork.networkCubeDataSet.locationSchema;
-    var locationLabels = [];
-    if (currentNetwork.userLocationTable != undefined) {
-        for (var i = 1; i < currentNetwork.userLocationTable.data.length; i++) {
-            locationLabels.push(currentNetwork.userLocationTable.data[i][currentNetwork.userLocationSchema.label]);
-        }
-    }
-    console.log('locationLabels', locationLabels);
-    var nodeIds = [];
-    var names = [];
-    var nodeLocations = [];
-    var nodeTimes = [];
-    if (currentNetwork.userNodeTable == undefined) {
-        console.log('no node table found, create node table');
-        var linkData = currentNetwork.userLinkTable.data;
-        var id_source;
-        var id_target;
-        var name;
-        var loc;
-        var linkSchema = currentNetwork.userLinkSchema;
-        var timeString;
-        var timeFormatted;
-        for (var i = 1; i < linkData.length; i++) {
-            name = linkData[i][linkSchema.source];
-            if (names.indexOf(name) < 0) {
-                id_source = nodeIds.length;
-                names.push(name);
-                nodeIds.push(id_source);
-                nodeLocations.push([]);
-                nodeTimes.push([]);
-            }
-            name = linkData[i][linkSchema.target];
-            if (names.indexOf(name) < 0) {
-                id_target = nodeIds.length;
-                names.push(name);
-                nodeIds.push(id_target);
-                nodeLocations.push([]);
-                nodeTimes.push([]);
-            }
-        }
-        normalizedLinkTable = [];
-        var linkTime;
-        var found = true;
-        for (var i = 0; i < linkData.length; i++) {
-            normalizedLinkTable.push([]);
-            for (var j = 0; j < linkData[i].length; j++) {
-                normalizedLinkTable[i].push(linkData[i][j]);
-            }
-            if (networkcube.isValidIndex(linkSchema.source)) {
-                normalizedLinkTable[i][linkSchema.source] = nodeIds[names.indexOf(linkData[i][linkSchema.source])];
-            }
-            if (networkcube.isValidIndex(linkSchema.target)) {
-                normalizedLinkTable[i][linkSchema.target] = nodeIds[names.indexOf(linkData[i][linkSchema.target])];
-            }
-            id_source = names.indexOf(linkData[i][linkSchema.source]);
-            id_target = names.indexOf(linkData[i][linkSchema.target]);
-            if (id_source == -1 || id_target == -1)
-                continue;
-            if (linkSchema.location_source > -1) {
-                loc = linkData[i][linkSchema.location_source].trim();
-                id = locationLabels.indexOf(loc);
-                if (id == -1)
-                    continue;
-                found = false;
-                for (var t = 0; t < nodeTimes[id_source].length; t++) {
-                    if (nodeTimes[id_source][t] == linkData[i][linkSchema.time]) {
-                        found = true;
-                        break;
-                    }
-                }
-                if (!found) {
-                    nodeTimes[id_source].push(linkData[i][linkSchema.time]);
-                    nodeLocations[id_source].push(id);
-                }
-                normalizedLinkTable[i][linkSchema.location_source] = id;
-            }
-            if (linkSchema.location_target > -1) {
-                loc = linkData[i][linkSchema.location_target].trim();
-                id = locationLabels.indexOf(loc);
-                if (id == -1)
-                    continue;
-                console.log('source_location id: ', loc, id_target, id);
-                found = false;
-                for (var t = 0; t < nodeTimes[id_target].length; t++) {
-                    if (nodeTimes[id_target][t] == linkData[i][linkSchema.time]) {
-                        found = true;
-                        break;
-                    }
-                }
-                if (!found) {
-                    nodeTimes[id_target].push(linkData[i][linkSchema.time]);
-                    nodeLocations[id_target].push(id);
-                }
-                normalizedLinkTable[i][linkSchema.location_target] = id;
-            }
-        }
-        normalizedLinkTable.shift();
-        var time;
-        normalizedNodeTable = [];
-        networkcubeNodeSchema.label = 1;
-        var locationsFound = false;
-        var timeFound = false;
-        if (nodeLocations.length > 0) {
-            networkcubeNodeSchema.location = 4;
-        }
-        if (nodeTimes.length > 0) {
-            networkcubeNodeSchema.location = 3;
-        }
-        for (var i = 0; i < nodeIds.length; i++) {
-            if (nodeLocations[i].length > 0) {
-                locationsFound = true;
-                for (var j = 0; j < nodeLocations[i].length; j++) {
-                    time = undefined;
-                    if (nodeTimes[i][j]) {
-                        time = nodeTimes[i][j].toString();
-                    }
-                    normalizedNodeTable.push([nodeIds[i], names[i], nodeTimes[i][j], nodeLocations[i][j]]);
-                }
-            }
-            else {
-                if (networkcube.isValidIndex(currentNetwork.userNodeSchema.time)) {
-                    normalizedNodeTable.push([nodeIds[i], names[i], undefined, undefined]);
-                }
-                else {
-                    normalizedNodeTable.push([nodeIds[i], names[i], undefined]);
-                }
-            }
-        }
-    }
-    if (currentNetwork.userNodeTable) {
-        networkcubeNodeSchema = new networkcube.NodeSchema(0);
-        networkcubeNodeSchema.id = currentNetwork.userNodeSchema.id;
-        networkcubeNodeSchema.label = currentNetwork.userNodeSchema.label;
-        if (networkcube.isValidIndex(currentNetwork.userNodeSchema.time)) {
-            networkcubeNodeSchema.time = currentNetwork.userNodeSchema.time;
-        }
-        if (networkcube.isValidIndex(currentNetwork.userNodeSchema.location)) {
-            networkcubeNodeSchema.location = currentNetwork.userNodeSchema.location;
-        }
-        if (networkcube.isValidIndex(currentNetwork.userNodeSchema.nodeType)) {
-            networkcubeNodeSchema.nodeType = currentNetwork.userNodeSchema.nodeType;
-        }
-    }
-    else {
-        networkcubeNodeSchema = new networkcube.NodeSchema(0);
-        networkcubeNodeSchema.id = 0;
-        networkcubeNodeSchema.label = 1;
-        if (networkcube.isValidIndex(currentNetwork.userLinkSchema.time)) {
-            networkcubeNodeSchema.time = 2;
-        }
-        if (networkcube.isValidIndex(currentNetwork.userLinkSchema.location_source) || networkcube.isValidIndex(currentNetwork.userLinkSchema.location_target)) {
-            networkcubeNodeSchema.location = 3;
-        }
-    }
-    if (currentNetwork.userLinkTable == undefined) {
-        console.log('Create and fill link table');
-        var nodeData = currentNetwork.userNodeTable.data;
-        console.log('nodeData', nodeData);
-        var nodeSchema = currentNetwork.userNodeSchema;
-        var id;
-        var relCol;
-        var newRow;
-        var nodeId;
-        var newNodeId = nodeData.length + 1;
-        networkcubeLinkSchema.linkType = 3;
-        if (networkcube.isValidIndex(nodeSchema.time))
-            networkcubeLinkSchema.time = 4;
-        for (var i = 1; i < nodeData.length; i++) {
-            newRow = [];
-            id = parseInt(nodeData[i][nodeSchema.id]);
-            while (normalizedNodeTable.length < (id + 1)) {
-                normalizedNodeTable.push([]);
-            }
-            newRow.push(id);
-            newRow.push(nodeData[i][nodeSchema.label]);
-            normalizedNodeTable[id] = newRow;
-        }
-        networkcubeNodeSchema.label = 1;
-        console.log('Create new links: ' + (nodeData.length * nodeSchema.relation.length), nodeData, nodeSchema.relation);
-        for (var i = 1; i < nodeData.length; i++) {
-            for (var j = 0; j < nodeSchema.relation.length; j++) {
-                relCol = nodeSchema.relation[j];
-                if (nodeData[i][relCol].length == 0)
-                    continue;
-                nodeId = -1;
-                for (var k = 0; k < normalizedNodeTable.length; k++) {
-                    if (normalizedNodeTable[k][1] == nodeData[i][relCol]) {
-                        nodeId = k;
-                        break;
-                    }
-                }
-                if (nodeId < 0) {
-                    nodeId = normalizedNodeTable.length;
-                    newRow = [];
-                    newRow.push(nodeId);
-                    newRow.push(nodeData[i][relCol]);
-                    newRow.push(undefined);
-                    newRow.push(undefined);
-                    normalizedNodeTable.push(newRow);
-                }
-                newRow = [];
-                newRow.push(normalizedLinkTable.length);
-                newRow.push(parseInt(nodeData[i][nodeSchema.id]));
-                newRow.push(nodeId);
-                newRow.push(nodeData[0][relCol]);
-                if (nodeSchema.time > -1)
-                    newRow.push(nodeData[i][nodeSchema.time]);
-                normalizedLinkTable.push(newRow);
-            }
-        }
-        console.log('normalizedLinkTable', normalizedLinkTable);
-    }
-    if (currentNetwork.userLinkTable) {
-        for (var field in currentNetwork.userLinkSchema) {
-            if (field == 'name')
-                continue;
-            networkcubeLinkSchema[field] = currentNetwork.userLinkSchema[field];
-        }
-    }
-    if (currentNetwork.hasOwnProperty('timeFormat') && currentNetwork.timeFormat != undefined && currentNetwork.timeFormat.length > 0) {
-        var format = currentNetwork.timeFormat;
-        if (networkcubeLinkSchema.time != undefined && networkcubeLinkSchema.time > -1) {
-            for (var i = 0; i < normalizedLinkTable.length; i++) {
-                time = moment(normalizedLinkTable[i][networkcubeLinkSchema.time], format).format(networkcube.timeFormat());
-                if (time.indexOf('Invalid') > -1)
-                    time = undefined;
-                normalizedLinkTable[i][networkcubeLinkSchema.time] = time;
-            }
-        }
-        if (networkcubeNodeSchema.time != undefined && networkcubeNodeSchema.time > -1) {
-            for (var i = 0; i < normalizedNodeTable.length; i++) {
-                time = moment(normalizedNodeTable[i][networkcubeNodeSchema.time], format).format(networkcube.timeFormat());
-                if (time.indexOf('Invalid') > -1)
-                    time = undefined;
-                normalizedNodeTable[i][networkcubeNodeSchema.time] = time;
-            }
-        }
-    }
-    if (currentNetwork.userLocationTable) {
-        currentNetwork.networkCubeDataSet.locationTable = currentNetwork.userLocationTable.data.slice(0);
-        currentNetwork.networkCubeDataSet.locationTable.shift();
-        currentNetwork.networkCubeDataSet.locationSchema = currentNetwork.userLocationSchema;
-    }
-    currentNetwork.networkCubeDataSet.nodeTable = normalizedNodeTable;
-    currentNetwork.networkCubeDataSet.linkTable = normalizedLinkTable;
-    currentNetwork.networkCubeDataSet.linkSchema = networkcubeLinkSchema;
-    currentNetwork.networkCubeDataSet.nodeSchema = networkcubeNodeSchema;
-    console.log('locationTable', currentNetwork.networkCubeDataSet.locationTable);
-    storage.saveNetwork(currentNetwork);
-    networkcube.setDataManagerOptions({ keepOnlyOneSession: true });
-    console.log('>> START IMPORT');
-    networkcube.importData(SESSION_NAME, currentNetwork.networkCubeDataSet);
-    console.log('>> IMPORTED: ', currentNetwork.networkCubeDataSet);
+    vistorian.importIntoNetworkcube(currentNetwork, SESSION_NAME, failSilently);
     loadNetworkList();
 }
 function deleteCurrentNetwork() {
-    storage.deleteNetwork(currentNetwork);
+    storage.deleteNetwork(currentNetwork, SESSION_NAME);
     unshowNetwork();
     loadNetworkList();
 }
@@ -417,13 +157,14 @@ function showNetwork(networkId) {
     unshowNetwork();
     $('#noNetworkTables').css('display', 'none');
     console.log('networkId', networkId);
-    currentNetwork = storage.getNetwork(networkId);
+    currentNetwork = storage.getNetwork(networkId, SESSION_NAME);
     if (currentNetwork == null)
         return;
     $('#individualTables').css('display', 'none');
     $('#networkTables').css('display', 'inline');
     $('#networknameInput').val(currentNetwork.name);
-    var tables = storage.getUserTables();
+    var tables = storage.getUserTables(SESSION_NAME);
+    console.log('usertables', tables, tables.length);
     $('#nodetableSelect').append('<option class="tableSelection">---</option>');
     $('#linktableSelect').append('<option class="tableSelection">---</option>');
     $('#locationtableSelect').append('<option class="tableSelection">---</option>');
@@ -440,6 +181,7 @@ function showNetwork(networkId) {
         $('#nodeTableContainer').css('display', 'none');
     }
     tables.forEach(function (t) {
+        console.log('attach: ', t.name);
         $('#nodetableSelect')
             .append('<option value="' + t.name + '">' + t.name + '</option>');
         $('#linktableSelect')
@@ -479,7 +221,7 @@ function unshowTable(elementName) {
 }
 var currentTable;
 function showSingleTable(tableName) {
-    currentTable = storage.getUserTable(tableName);
+    currentTable = storage.getUserTable(tableName, SESSION_NAME);
     showTable(currentTable, '#individualTable', false);
     $('#individualTables').css('display', 'inline');
     $('#networkTables').css('display', 'none');
@@ -634,7 +376,7 @@ function showTable(table, elementName, isLocationTable, schema) {
     }
 }
 function deleteCurrentTable() {
-    storage.deleteTable(currentTable);
+    storage.deleteTable(currentTable, SESSION_NAME);
     $('#individualTables').css('display', 'none');
     loadTableList();
 }
@@ -696,9 +438,10 @@ function getFileInfos(e) {
     uploadFiles();
 }
 function uploadFiles() {
+    console.log('uploadFiles', SESSION_NAME);
     vistorian.loadCSV(filesToUpload, function () {
         loadTableList();
-    });
+    }, SESSION_NAME);
 }
 function exportCurrentTableCSV(tableName) {
     saveCellChanges();
@@ -724,7 +467,7 @@ function replaceCellContents(tableId) {
     var arr;
     if (tableId.startsWith('datatable_'))
         tableId = tableId.slice(10, tableId.length);
-    var table = storage.getUserTable(tableId);
+    var table = storage.getUserTable(tableId, SESSION_NAME);
     if (table == undefined) {
         table = currentNetwork.userLocationTable;
     }
@@ -764,8 +507,8 @@ function extractLocations() {
         currentNetwork.userLocationTable = new vistorian.VTable(tableName + '-locations', []);
         currentNetwork.userLocationSchema = new networkcube.LocationSchema(0, 1, 2, 3, 4);
         currentNetwork.userLocationTable.data.push(['Id', 'User Label', 'Geo Name', 'Longitude', 'Latitude']);
-        storage.saveUserTable(currentNetwork.userLocationTable);
-        tables = storage.getUserTables();
+        storage.saveUserTable(currentNetwork.userLocationTable, SESSION_NAME);
+        tables = storage.getUserTables(SESSION_NAME);
     }
     var locationTable = currentNetwork.userLocationTable;
     var locationSchema = currentNetwork.userLocationSchema;
@@ -802,8 +545,9 @@ function extractLocations() {
     showNetwork(currentNetwork.id);
     if (locationsFound > 0)
         showMessage(locationsFound + ' locations extracted successfully.', 2000);
-    else
-        showMessage('In order to extract locations, you must specify which columns are locations in your node and link tables.', 2000);
+    else {
+        updateLocations();
+    }
 }
 function createLocationEntry(name, rows) {
     if (name == undefined
@@ -860,22 +604,22 @@ function clearCache() {
     location.reload();
 }
 function removeNetwork(networkId) {
-    currentNetwork = storage.getNetwork(networkId);
+    currentNetwork = storage.getNetwork(networkId, SESSION_NAME);
     deleteCurrentNetwork();
 }
 function removeTable(tableId) {
-    var table = storage.getUserTable(tableId);
-    storage.deleteTable(table);
+    var table = storage.getUserTable(tableId, SESSION_NAME);
+    storage.deleteTable(table, SESSION_NAME);
     unshowTable('#individualTables');
     loadTableList();
 }
 function exportNetwork(networkId) {
-    vistorian.exportNetwork(storage.getNetwork(networkId));
+    vistorian.exportNetwork(storage.getNetwork(networkId, SESSION_NAME));
 }
 function setNetworkConfig(string) {
     currentNetwork.networkConfig = string;
     $('#chooseNetworktype').css('display', 'none');
-    storage.saveNetwork(currentNetwork);
+    storage.saveNetwork(currentNetwork, SESSION_NAME);
     loadNetworkList();
     showNetwork(currentNetwork.id);
 }

@@ -27,16 +27,16 @@
                 <p class="subtitle">Interactive Visualizations for Dynamic and Multivariate Networks. <br> Online and Open Source.</p>
 
                 <div id="vistiles">                    
-                    <a href="sites/nodelink.html?session=VISTORIAN_DEMO&datasetName=Scientists" target="_blank">
+                    <a href="sites/nodelink.html?session=0&datasetName=demo_scientists" target="_blank">
                         <img class="visimage" src="figures/nodelink.png"/>
                     </a>
-                    <a href="sites/dynamicego.html?session=VISTORIAN_DEMO&datasetName=Scientists" target="_blank">
+                    <a href="sites/dynamicego.html?session=0&datasetName=demo_scientists" target="_blank">
                         <img class="visimage" src="figures/ego.png" />
                     </a>
-                    <a href="sites/matrix.html?session=VISTORIAN_DEMO&datasetName=Scientists" target="_blank">
+                    <a href="sites/matrix.html?session=0&datasetName=demo_scientists" target="_blank">
                         <img class="visimage" src="figures/matrix.png" />
                     </a>
-                    <a href="sites/map.html?session=VISTORIAN_DEMO&datasetName=Scientists" target="_blank">
+                    <a href="sites/map.html?session=0&datasetName=demo_scientists" target="_blank">
                         <img class="visimage" src="figures/map.png" />
                     </a>
 
@@ -45,7 +45,7 @@
 
                 <ul id="menu">
                     <li>
-                        <a href="dataview.html?session=VISTORIAN_DEMO"><img src="logos/arrow.png" class="menuicon"/>Demo</a>
+                        <a href="dataview.html?session=0"><img src="logos/arrow.png" class="menuicon"/>Demo</a>
                     </li>
                     <li>
                         <a id="resumeSessionLink2"><img src="logos/network.png" class="menuicon" />Your Session</a>
@@ -206,7 +206,7 @@
 
             // set link to previous sesssion
             var PREVIOUS_SESSION = storage.getLastSessionId();
-            if (!PREVIOUS_SESSION) {
+            if (!PREVIOUS_SESSION || PREVIOUS_SESSION == '0' || PREVIOUS_SESSION == 0) {
                 PREVIOUS_SESSION = SESSION_NAME
                 console.log('create new session', PREVIOUS_SESSION)
             } else {
@@ -235,10 +235,11 @@
 
 
             // Load demo data
-            $.get("https://raw.githubusercontent.com/networkcube/vistorian/master/demo/vistorian-demo-scientists.vistorian",
+            $.get("https://raw.githubusercontent.com/networkcube/vistorian/master/demo/demo_scientists.vistorian",
                 function (data)
                 {   
-                    vistorian.importData(data, 'VISTORIAN_DEMO');            
+                    vistorian.importData(JSON.parse(data), 0);            
+                    vistorian.importIntoNetworkcube(JSON.parse(data), 0) 
                 });
 
         </script>
