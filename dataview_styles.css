@@ -99,12 +99,12 @@ input#replaceButton{
 }
 
 .menuButton{
-    background-color:#aaa;
+    background-color:#eee;
     border-radius:10px;
     border: none;
     display:inline-block;
     cursor:pointer;
-    color:#ffffff;
+    color:#111;
     font-size:12px;
     float:right;
     font-weight: 400;
@@ -122,6 +122,24 @@ input#replaceButton{
     overflow: hidden;
     position: absolute;
     z-index: -1;
+    font-weight: 500;
+}
+
+input#clearCacheButton{
+    margin-top:40px;
+    text-align: left;
+    background-color:#eee;
+    border-radius:10px;
+    border: none;
+    display:inline-block;
+    cursor:pointer;
+    color:#111;
+    font-size:12px;
+    font-weight: 400;
+    padding-top: 2px;
+    padding-right: 6px;
+    padding-bottom: 3px;
+    padding-left: 6px;
 }
 
 
