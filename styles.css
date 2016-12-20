@@ -275,6 +275,14 @@ pre{
 
 
 
+/*BILIO*/
+
+#biblio b{
+	text-decoration: underline;
+}
+
+
+
 /*/*TOOL TIPS*/
 /* Tooltip text */
 /*.tooltiptext {
