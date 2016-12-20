@@ -39,6 +39,10 @@ div#logos img{
 	margin-right: 20px;
 }
 
+
+
+/*CONTENT*/
+
 div#content{
 	padding-top: 50px;
 }
@@ -79,6 +83,11 @@ div#body-rest{
 	margin: auto;
 	text-align: left;
 }
+
+
+
+/*MENU*/
+
 
 img#logo{
 	padding-top: 20px;
@@ -277,6 +286,12 @@ pre{
 	line-height: 1em;
 }
 
+
+#features{
+	width: 90%;
+	margin-top: 20px;
+	margin-bottom: 20px;
+}
 
 
 /*BILIO*/
