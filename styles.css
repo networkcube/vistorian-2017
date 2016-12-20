@@ -111,7 +111,7 @@ ul#menu a{
 }
 
 ul#menu .menuicon{
-	margin-bottom: -13px;
+	margin-bottom: -11px;
 }
 
 
@@ -235,6 +235,10 @@ p.error_msg{
 	color: red;
 }
 
+
+#startcontinue{
+	margin-bottom: -11px;
+}
 
 .visbutton{
 	background-color:transparent;
