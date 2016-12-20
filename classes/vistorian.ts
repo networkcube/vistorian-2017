@@ -668,7 +668,7 @@ module vistorian {
                     if (id == -1)
                         continue;
 
-                    console.log('source_location id: ', loc, id_target, id)
+                    // console.log('source_location id: ', loc, id_target, id)
                     // check if entry already exists for this time, if yes, discard this one.           
                     found = false;
                     for (var t = 0; t < nodeTimes[id_target].length; t++) {
@@ -899,7 +899,8 @@ module vistorian {
 
         storage.saveNetwork(currentNetwork, sessionid);
 
-        networkcube.setDataManagerOptions({ keepOnlyOneSession: true });
+        // networkcube.setDataManagerOptions({ keepOnlyOneSession: true });
+        networkcube.setDataManagerOptions({ keepOnlyOneSession: false });
         console.log('>> START IMPORT');
         networkcube.importData(sessionid, currentNetwork.networkCubeDataSet);
         console.log('>> IMPORTED: ', currentNetwork.networkCubeDataSet);

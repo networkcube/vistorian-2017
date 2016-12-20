@@ -598,9 +598,7 @@ function saveCellChanges() {
 }
 function clearCache() {
     unshowNetwork();
-    localStorage.clear();
-    $('#tableList').empty();
-    $('#networkList').empty();
+    networkcube.clearAllDataManagerSessionCaches();
     location.reload();
 }
 function removeNetwork(networkId) {

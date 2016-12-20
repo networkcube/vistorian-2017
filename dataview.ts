@@ -1447,12 +1447,10 @@ function clearCache(){
     unshowNetwork();
     // networkcube.clearAllDataManagerSessionCaches();    
     
-    localStorage.clear();
+    // localStorage.clear();
     // vistorian.clearCache();
+    networkcube.clearAllDataManagerSessionCaches();
 
-    $('#tableList').empty()
-    $('#networkList').empty()
-    
     location.reload()
     // showMessage('Cache cleared', 2000)
 

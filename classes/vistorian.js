@@ -394,7 +394,6 @@ var vistorian;
                     id = locationLabels.indexOf(loc);
                     if (id == -1)
                         continue;
-                    console.log('source_location id: ', loc, id_target, id);
                     found = false;
                     for (var t = 0; t < nodeTimes[id_target].length; t++) {
                         if (nodeTimes[id_target][t] == linkData[i][linkSchema.time]) {
@@ -562,7 +561,7 @@ var vistorian;
         currentNetwork.networkCubeDataSet.nodeSchema = networkcubeNodeSchema;
         console.log('locationTable', currentNetwork.networkCubeDataSet.locationTable);
         storage.saveNetwork(currentNetwork, sessionid);
-        networkcube.setDataManagerOptions({ keepOnlyOneSession: true });
+        networkcube.setDataManagerOptions({ keepOnlyOneSession: false });
         console.log('>> START IMPORT');
         networkcube.importData(sessionid, currentNetwork.networkCubeDataSet);
         console.log('>> IMPORTED: ', currentNetwork.networkCubeDataSet);

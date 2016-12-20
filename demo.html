@@ -176,29 +176,31 @@
                 var params = networkcube.getUrlVars();
                 params['datasetName'] = params['datasetName'].replace(/___/g, ' ');
 
+                console.log('NETWORK', networkcube.getDynamicGraph(params['datasetName'], params['session']))
+
                 networkcube.createVisualizationIFrame(
                     'div_nodelink', 
                     'https://networkcube.github.io/networkcube/visualizations/nodelink/index.html',
                     params['session'], params['datasetName'], 
                     WIDTH, HEIGHT, visparams);
 
-                networkcube.createVisualizationIFrame(
-                    'div_matrix', 
-                    'https://networkcube.github.io/networkcube/visualizations/matrix/index.html',
-                    params['session'], params['datasetName'], 
-                    WIDTH, HEIGHT, visparams);
+                // networkcube.createVisualizationIFrame(
+                //     'div_matrix', 
+                //     'https://networkcube.github.io/networkcube/visualizations/matrix/index.html',
+                //     params['session'], params['datasetName'], 
+                //     WIDTH, HEIGHT, visparams);
                 
-                networkcube.createVisualizationIFrame(
-                    'div_dynamicego', 
-                    'https://networkcube.github.io/networkcube/visualizations/dynamicego/index.html',
-                    params['session'], params['datasetName'], 
-                    WIDTH, HEIGHT, visparams);
+                // networkcube.createVisualizationIFrame(
+                //     'div_dynamicego', 
+                //     'https://networkcube.github.io/networkcube/visualizations/dynamicego/index.html',
+                //     params['session'], params['datasetName'], 
+                //     WIDTH, HEIGHT, visparams);
                 
-                networkcube.createVisualizationIFrame(
-                    'div_map', 
-                    'https://networkcube.github.io/networkcube/visualizations/map/index.html',
-                    params['session'], params['datasetName'], 
-                    WIDTH, HEIGHT, visparams);
+                // networkcube.createVisualizationIFrame(
+                //     'div_map', 
+                //     'https://networkcube.github.io/networkcube/visualizations/map/index.html',
+                //     params['session'], params['datasetName'], 
+                //     WIDTH, HEIGHT, visparams);
 
         });
 
