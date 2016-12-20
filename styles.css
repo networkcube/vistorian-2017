@@ -111,7 +111,7 @@ ul#menu a{
 }
 
 ul#menu .menuicon{
-	margin-bottom: -13px;
+	margin-bottom: -11px;
 }
 
 
@@ -236,6 +236,10 @@ p.error_msg{
 }
 
 
+#startcontinue{
+	margin-bottom: -11px;
+}
+
 .visbutton{
 	background-color:transparent;
 	border: none;
@@ -271,6 +275,14 @@ select.schemaSelection{
 
 pre{
 	line-height: 1em;
+}
+
+
+
+/*BILIO*/
+
+#biblio b{
+	text-decoration: underline;
 }
 
 
