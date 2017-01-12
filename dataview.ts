@@ -1365,7 +1365,7 @@ function extractLocations() {
 
 
     if (locationsFound > 0)
-        showMessage(locationsFound + ' locations extracted successfully.', 2000);
+        showMessage(locationsFound + ' locations found.', 2000);
     else{
         // showMessage('In order to extract locations, you must specify which columns are locations in your node and link tables.', 2000);
         updateLocations();

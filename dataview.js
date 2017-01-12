@@ -544,7 +544,7 @@ function extractLocations() {
     saveCurrentNetwork(false);
     showNetwork(currentNetwork.id);
     if (locationsFound > 0)
-        showMessage(locationsFound + ' locations extracted successfully.', 2000);
+        showMessage(locationsFound + ' locations found.', 2000);
     else {
         updateLocations();
     }
